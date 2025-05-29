@@ -27,8 +27,11 @@ public class Memory {
             int i = 0;
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                myArray[i] = Integer.parseInt(line);
-                i++;
+                int nextValue = Integer.parseInt(line);
+                if(isWord(nextValue)) {
+                    myArray[i] = Integer.parseInt(line);
+                    i++;
+                }
             }
         } catch (FileNotFoundException e) {
             System.out.printf("File %s not found", fileName);
@@ -41,5 +44,9 @@ public class Memory {
         if (address > 99 || address < 0) {
             throw new IndexOutOfBoundsException();
         }
+    }
+
+    public static boolean isWord(int value) {
+        return String.valueOf(Math.abs(value)).length() == 4;
     }
 }
