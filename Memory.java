@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Memory {
     int[] memoryArray = new int[100];
+
     public Memory(String fileName) {
         if (fileName.endsWith(".txt")) {
             memoryArray = readText(fileName);
@@ -53,4 +54,8 @@ public class Memory {
             return String.valueOf(Math.abs(value)).length() == 4;
     }
 
+    //Using for UVCpu Testing without needing fileName
+    public Memory() {
+        memoryArray = new int[100];
+    }
 }
