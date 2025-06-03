@@ -3,27 +3,42 @@
         //Part A area
         //while loop
         //split number into opcode and address
+        public String testName = "";
+        public Memory mem;
 
-        Memory mem = new Memory("Test1.txt");
+        //Using for testing
+        public UVCpu() {
+            this.mem = new Memory(); // You'll need to add this constructor in Memory
+        }
+
+
+     public UVCpu(String fileName) {
+            this.testName = fileName;
+            this.mem = new Memory(testName);
+        }
 
         //Console con = new Console();
 
         int pc = 0, acc = 0; // program counter, accumulator
         boolean halted = false;
+        public static final int overflowLimit = 9999; //Used to mark limit
 
-
-        public void run(){
+        public void run() {
             int instruction = 0;
             int opcode = 0;
             int address = 0;
-            while(!halted){
+            while (!halted) {
+                //checks for overflow
+                if(acc > overflowLimit || acc < -overflowLimit){
+                    throw new Overflow("Overflow limit exceeded. Value: " + acc);
+                }
                 instruction = mem.read(pc); //read memory address at pc value into instruction
                 address = instruction % 100; //modulo division to get last two digits
                 opcode = instruction / 100; //int division to get first two digits
                 //if division has problems just turn instruction into a string or char array instead
 
                 int value = mem.read(address);
-                switch(opcode){
+                switch (opcode) {
                     case 10: //read from keyboard, write to memory
                         mem.write(address, UVConsole.userInputInt());
                         break;
@@ -36,25 +51,29 @@
                     case 21: //store word from accumulator into location in memory
                         mem.write(address, acc);
                         break;
-                    case 30: //30-33 math ops, hook up with function below
+                    case 30: //Add case
+                        acc = acc + value;
                         break;
-                    case 31:
+                    case 31: //Subtract
+                        acc = acc - value;
                         break;
-                    case 32:
+                    case 32: //Divide
+                        acc = acc / value;
                         break;
-                    case 33:
+                    case 33: //Multiply
+                        acc = acc * value;
                         break;
                     case 40: //branch
                         pc = address;
                         continue;
                     case 41: //branch if acc < 0
-                        if(acc < 0) {
+                        if (acc < 0) {
                             pc = address;
                             continue;
                         }
                         break;
                     case 42: //branch if acc == 0
-                        if(acc == 0){
+                        if (acc == 0) {
                             pc = address;
                             continue;
                         }
@@ -64,42 +83,8 @@
                         break;
                 } //end sc
 
-            pc++; //iterate the memory up by 1
-
+                pc++; //iterate the memory up by 1
+            }
         }
-    }
-
-    //might want to just integrate math functions into run loop
-
-    public static final int overflowLimit = 9999; //Used to mark limit
-
-public Integer opcodeMath(int opcode, int address, Memory memory, int accumulator){
-
-    int value = memory.read(address); //obtains value from the used address
-    switch(opcode){ //switch to check through each opcode for correct one
-        case 30: //Add case
-            accumulator = accumulator + value;
-            break;
-        case 31: //Subtract
-            accumulator = accumulator - value;
-            break;
-        case 32: //Divide
-            accumulator = accumulator / value;
-            break;
-        case 33: //Multiply
-            accumulator = accumulator * value;
-            break;
-        default: //If it is invalid
-            System.out.println("Invalid opcode");
-            return null;
-    }
-
-    //checks for overflow
-    if(accumulator > overflowLimit || accumulator < -overflowLimit){
-        throw new Overflow("Overflow limit exceeded. Value: " + accumulator);
-    }
-
-    return accumulator; //returns the value
-}
 
 }
