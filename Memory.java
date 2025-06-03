@@ -14,8 +14,6 @@ public class Memory {
         return memoryArray[address];
     }
     public void write(int address, int value) {
-        // TODO, refactor to print to screen instead of writing to memory?
-        // I have two ideas in my mind on what this does and I want to clairify
         checkIndex(address);
         memoryArray[address] = value;
     }
@@ -27,11 +25,19 @@ public class Memory {
             int i = 0;
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                myArray[i] = Integer.parseInt(line);
-                i++;
+                try{
+                int nextValue = Integer.parseInt(line);
+                if(isWord(nextValue)) {
+                    myArray[i] = Integer.parseInt(line);
+                    i++;
+                }
+                }catch(NumberFormatException e) {
+                    // This skips over any lines that are not acceptable words: "abcd" "10000"
+                }
+
             }
         } catch (FileNotFoundException e) {
-            System.out.printf("File %s not found", fileName);
+            System.out.printf("File %s not found, please make sure", fileName);
             e.printStackTrace();
         }
         return myArray;
@@ -42,4 +48,9 @@ public class Memory {
             throw new IndexOutOfBoundsException();
         }
     }
+
+    public static boolean isWord(int value) {
+            return String.valueOf(Math.abs(value)).length() == 4;
+    }
+
 }
