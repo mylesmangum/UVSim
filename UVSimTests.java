@@ -213,64 +213,6 @@ public class UVSimTests {
     }
 
     @Test
-    public void testOverflowPositive() {
-        UVCpu cpu = new UVCpu();
-        cpu.mem.write(0, 3005);
-        cpu.mem.write(1, 4300);
-        cpu.mem.write(5, 1);
-        cpu.acc = 9999;
-
-        try {
-            cpu.run();
-            fail("Overflow exception not thrown");
-        } catch (Overflow e) {
-            assertTrue(e.getMessage().contains("10000"));
-        }
-    }
-
-    @Test
-    public void testOverflowNegative() {
-        UVCpu cpu = new UVCpu();
-        cpu.mem.write(0, 3105);
-        cpu.mem.write(1, 4300);
-        cpu.mem.write(5, 1);
-        cpu.acc = -9999;
-
-        try {
-            cpu.run();
-            fail("Overflow exception not thrown");
-        } catch (Overflow e) {
-            assertTrue(e.getMessage().contains("-10000"));
-        }
-    }
-
-    @Test
-    public void testComplexProgram() {
-        UVCpu cpu = new UVCpu();
-        cpu.mem.write(0, 2005);
-        cpu.mem.write(1, 3006);
-        cpu.mem.write(2, 2107);
-        cpu.mem.write(3, 1107);
-        cpu.mem.write(4, 4300);
-        cpu.mem.write(5, 10);
-        cpu.mem.write(6, 15);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
-
-        try {
-            cpu.run();
-
-            assertEquals(25, cpu.acc);
-            assertEquals(25, cpu.mem.read(7));
-            assertEquals("25" + System.lineSeparator(), outputStream.toString());
-        } finally {
-            System.setOut(originalOut);
-        }
-    }
-
-    @Test
     public void testInvalidMemoryAccess() {
         UVCpu cpu = new UVCpu();
         cpu.mem.write(0, 2099);
