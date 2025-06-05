@@ -116,12 +116,5 @@ Goal: End program execution cleanly.
 Detect opcode 43.
 Print "Program halted normally."
 Break out of main loop and exit to OS.
-12.  Runtime Exception Handling
-Actor: Error‑monitor sub‑routine
-System: UVCpu
-Goal: Stop execution and dump context when a fatal error occurs.
-Receive error signal (overflow, divide‑by‑zero, bad opcode).
-Print descriptive message including PC and accumulator value.
-Dump memory snapshot (optional).
-Set CPU state to halted.
+
 
