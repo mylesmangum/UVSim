@@ -8,6 +8,8 @@ public class Memory {
     public Memory(String fileName) {
         if (fileName.endsWith(".txt")) {
             memoryArray = readText(fileName);
+        } else {
+            throw new RuntimeException("Invalid file format");
         }
     }
     public int read(int address) {
