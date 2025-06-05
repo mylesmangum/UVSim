@@ -5,11 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class UVSimTests {
 
@@ -435,5 +431,30 @@ public class UVSimTests {
     public void isWord() {
         assertTrue(Memory.isWord(1000));
         assertFalse(Memory.isWord(100));
+    }
+
+    // // // // // // // // // // // // // // // // // // // // // // // // // // //
+    // // // // // // // // // //  Memory Tests  // // // // // // // // // // // //
+    // // // // // // // // // // // // // // // // // // // // // // // // // // //
+    @Test
+    public void testUserInt() {
+        provideInput("123");
+        int input = UVConsole.userInputInt();
+        provideInput("-456");
+        assertEquals(123, input);
+        input = UVConsole.userInputInt();
+        assertEquals(-456, input);
+    }
+
+    @Test
+    public void testGetFile() {
+        provideInput("ABC123");
+        String input = UVConsole.getFile();
+        assertEquals("ABC123", input);
+    }
+
+    public void provideInput(String data) {
+        ByteArrayInputStream testIn = new ByteArrayInputStream(data.getBytes());
+        System.setIn(testIn);
     }
 }
