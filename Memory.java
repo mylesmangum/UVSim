@@ -34,14 +34,17 @@ public class Memory {
                     myArray[i] = Integer.parseInt(line);
                     i++;
                 }
+                else {
+                    UVConsole.displayMalformedLine(line);
+                }
                 }catch(NumberFormatException e) {
-                    // This skips over any lines that are not acceptable words: "abcd" "10000"
+                    UVConsole.displayMalformedLine(line);
                 }
 
             }
         } catch (FileNotFoundException e) {
-            System.out.printf("File %s not found, please make sure", fileName);
-            e.printStackTrace();
+            System.out.printf("File %s not found, please make sure the file is in the same folder as this program.\n", fileName);
+            return readText(UVConsole.getFile());
         }
         return myArray;
     }

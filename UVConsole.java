@@ -6,6 +6,10 @@ public class UVConsole {
         Scanner userInput = new Scanner(System.in);
         System.out.print("Enter UV relative file path: ");
         String inputFile = userInput.nextLine();
+        if (!inputFile.endsWith(".txt")) {
+            System.out.println("Invalid file format, please try again\n");
+            return getFile();
+        }
         return inputFile;
     }
     public static int userInputInt() {
@@ -15,8 +19,12 @@ public class UVConsole {
         try {
             integerInput = userInput.nextInt();
         } catch (Exception e) {
-            throw new InputMismatchException("Input was not an integer");
+            System.out.println("Please enter a valid integer");
+            return userInputInt();
         }
         return integerInput;
+    }
+    public static void displayMalformedLine(String line) {
+        System.out.printf("It seems that a line in your file is not a 4 digit word.\nThe line causing issues is:\n%s\nThis line has been skipped in case it's a comment.\n", line);
     }
 }
