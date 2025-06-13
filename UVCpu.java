@@ -29,8 +29,11 @@
             int address = 0;
             while (!halted) {
                 //checks for overflow
-                if(acc > overflowLimit || acc < -overflowLimit){
-                    throw new Overflow("Overflow limit exceeded. Value: " + acc);
+                if (Math.abs(acc) > overflowLimit) {
+                    int sign;
+                    if (acc < 0) {sign = -1;}
+                    else {sign = 1;}
+                    acc = sign * (Math.abs(acc) % 10000);
                 }
                 instruction = mem.read(pc); //read memory address at pc value into instruction
                 address = instruction % 100; //modulo division to get last two digits
