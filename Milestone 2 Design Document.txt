@@ -1,4 +1,4 @@
-﻿Milestone 2 Design Document 
+﻿Milestone 2 Design Document
 CS-2450
 Group D
 5/27/25
@@ -77,15 +77,23 @@ System: Register logic
 Goal: Save the accumulator back to memory.
 Read current accumulator.
 Write it to operand address in memory.
-7.  ADD (30) & SUBTRACT (31)
+7.  ADD (30)
 Actor: CPU arithmetic unit
 System: ALU emulation
-Goal: Update accumulator with addition or subtraction.
+Goal: Update accumulator with addition.
 Fetch operand value.
-Compute acc = acc +/- operand.
+Compute acc = acc + operand.
 If |acc| > 9999, flag overflow, print error, HALT.
 Otherwise storethe result in accumulator.
-8.  DIVIDE (32)
+8.  SUBTRACT (31)
+Actor: CPU arithmetic unit
+System: ALU emulation
+Goal: Update accumulator with subtraction.
+Fetch operand value.
+Compute acc = acc - operand.
+If |acc| > 9999, flag overflow, print error, HALT.
+Otherwise storethe result in accumulator.
+9.  DIVIDE (32)
 Actor: CPU arithmetic unit
 System: ALU emulation
 Goal: Divide accumulator by operand.
@@ -94,7 +102,7 @@ If operand == 0, print divide by zero error, HALT.
 Else compute integer division, store in accumulator.
 
 
-9.  MULTIPLY (33)
+10.  MULTIPLY (33)
 Actor: CPU arithmetic unit
 System: ALU emulation
 Goal: Multiply accumulator by a word from memory.
@@ -103,13 +111,23 @@ Compute acc = acc * operand.
 If |acc| > 9999, flag overflow, print an error, and HALT.
 Otherwise, store the result in the accumulator.
 
-10.  BRANCH, BRANCHNEG, BRANCHZERO (40-42)
+11. BRANCH (40)
 Actor: CPU control unit
 System: Program counter manager
-Goal: Alter sequential flow when conditions are met.
-Evaluate condition (always true, acc < 0, or acc == 0).
-If true, set programCounter = operand; else continue sequentially.
-11.  HALT (43)
+Goal: Unconditionally alter sequential flow.
+Set programCounter = operand.
+12. BRANCHNEG (41)
+Actor: CPU control unit
+System: Program counter manager
+Goal: Alter sequential flow if accumulator is negative.
+If acc < 0, set programCounter = operand; else continue sequentially.
+13. BRANCHZERO (42)
+Actor: CPU control unit
+System: Program counter manager
+Goal: Alter sequential flow if accumulator is zero.
+If acc == 0, set programCounter = operand; else continue sequentially.
+
+14.  HALT (43)
 Actor: CPU loop
 System: UVCpu
 Goal: End program execution cleanly.
