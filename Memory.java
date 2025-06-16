@@ -29,16 +29,20 @@ public class Memory {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 try{
-                int nextValue = Integer.parseInt(line);
-                if(isWord(nextValue)) {
+                //int nextValue = Integer.parseInt(line); Changed to use just the string
+                if(isWord(line)) {
                     myArray[i] = Integer.parseInt(line);
                     i++;
                 }
                 else {
                     UVConsole.displayMalformedLine(line);
+                    //System.out.printf("in else");
+
                 }
                 }catch(NumberFormatException e) {
                     UVConsole.displayMalformedLine(line);
+                    //System.out.printf("in catch");
+
                 }
 
             }
@@ -55,8 +59,10 @@ public class Memory {
         }
     }
 
-    public static boolean isWord(int value) {
-            return String.valueOf(Math.abs(value)).length() == 4;
+    public static boolean isWord(String value) { //changed to take a string, match it to be 5 chars
+
+
+        return value.length() == 5;
     }
 
     //Using for UVCpu Testing without needing fileName
