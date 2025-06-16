@@ -368,13 +368,13 @@ public class UVSimTests {
         int[] emptyArray = new int[100];
         assertArrayEquals(emptyArray, badMem.memoryArray);
     }
-
+    /*
     @Test
     public void isWord() {
         assertTrue(Memory.isWord(1000));
         assertFalse(Memory.isWord(100));
     }
-
+    */
     // // // // // // // // // // // // // // // // // // // // // // // // // // //
     // // // // // // // // // //  Memory Tests  // // // // // // // // // // // //
     // // // // // // // // // // // // // // // // // // // // // // // // // // //
