@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 
 public class UVSimGUI extends JFrame {
     private UVCpu cpu;
+    private String currentDirectoryPath = ".";
     private String currentFilePath = "";
     private JButton openButton;
     private JButton runButton;
@@ -141,7 +142,7 @@ public class UVSimGUI extends JFrame {
 
     private void openFile() {
 
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(currentDirectoryPath);
         chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
             public boolean accept(File f) {
                 return f.isDirectory() || f.getName().endsWith(".txt");
@@ -154,6 +155,8 @@ public class UVSimGUI extends JFrame {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             currentFilePath = file.getAbsolutePath();
+            currentDirectoryPath = file.getParent();
+//            System.out.println("getParent: " + file.getParent());
 
             try {
 
