@@ -8,6 +8,8 @@ public class Memory {
     public Memory(String fileName) {
         if (fileName.endsWith(".txt")) {
             memoryArray = readText(fileName);
+        } else {
+            throw new RuntimeException("Invalid file format");
         }
     }
     public int read(int address) {
@@ -27,19 +29,26 @@ public class Memory {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 try{
-                int nextValue = Integer.parseInt(line);
-                if(isWord(nextValue)) {
+                //int nextValue = Integer.parseInt(line); Changed to use just the string
+                if(isWord(line)) {
                     myArray[i] = Integer.parseInt(line);
                     i++;
                 }
+                else {
+                    UVConsole.displayMalformedLine(line);
+                    //System.out.printf("in else");
+
+                }
                 }catch(NumberFormatException e) {
-                    // This skips over any lines that are not acceptable words: "abcd" "10000"
+                    UVConsole.displayMalformedLine(line);
+                    //System.out.printf("in catch");
+
                 }
 
             }
         } catch (FileNotFoundException e) {
-            System.out.printf("File %s not found, please make sure", fileName);
-            e.printStackTrace();
+            System.out.printf("File %s not found, please make sure the file is in the same folder as this program.\n", fileName);
+            return readText(UVConsole.getFile());
         }
         return myArray;
     }
@@ -50,8 +59,10 @@ public class Memory {
         }
     }
 
-    public static boolean isWord(int value) {
-            return String.valueOf(Math.abs(value)).length() == 4;
+    public static boolean isWord(String value) { //changed to take a string, match it to be 5 chars
+
+
+        return value.length() == 5;
     }
 
     //Using for UVCpu Testing without needing fileName
