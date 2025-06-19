@@ -43,7 +43,7 @@
                         mem.write(address, UVConsole.userInputInt());
                         break;
                     case 11: //write a word from location in memory to screen
-                        System.out.println(mem.read(address));
+                        UVConsole.displayOutput(String.valueOf(mem.read(address)));
                         break;
                     case 20: //load from memory into accumulator
                         acc = value;
