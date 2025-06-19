@@ -23,6 +23,7 @@ public class UVConsole {
     }
     public static int userInputInt() {
         if (gui != null) {
+            UVConsole.displayOutput("Enter a signed four digit word: ");
             String input = gui.getInput();
             try {
                 return Integer.parseInt(input);
