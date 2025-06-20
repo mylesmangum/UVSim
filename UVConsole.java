@@ -7,7 +7,6 @@ public class UVConsole {
     public static void setGUI(UVSimGUI guiInstance) {
         gui = guiInstance;
     }
-
     public static String getFile() {
         if (gui != null) {
             return ""; // File selection handled by GUI
@@ -51,6 +50,11 @@ public class UVConsole {
         }
     }
     public static void displayMalformedLine(String line) {
-        System.out.printf("It seems that a line in your file is not a 4 digit word.\nThe line causing issues is:\n%s\nThis line has been skipped in case it's a comment.\n", line);
+        if (gui != null) {
+            UVConsole.displayOutput(String.format("It seems that a line in your file is not a 4 digit word.\nThe line causing issues is:\n%s\nThis line has been skipped in case it's a comment.\n", line));
+        } else {
+            System.out.printf("It seems that a line in your file is not a 4 digit word.\nThe line causing issues is:\n%s\nThis line has been skipped in case it's a comment.\n", line);
+        }
+
     }
 }
