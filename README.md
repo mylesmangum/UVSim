@@ -21,15 +21,18 @@ input "java -jar UVSim.jar" into your terminal
 You should see a GUI launch, with a few different possible inputs, below are instructions
 on each section and button.
 
+
 Open Program File
 =================
 Selecting this option will open up a secondary menu.  This menu will open up into your local folder, where
 UVSim.jar is located.  From here, select a text file to be loaded into memory
+
 Run Program
 =================
 After a file has been loaded, this button will be pressable.  Selecting this will run through your code, starting
 at where the Program Counter is pointing to in memory.  To rerun the code, you will need to reopen the file with 
 Open Program File.
+
 
 Input
 =================
@@ -39,12 +42,12 @@ any text inputted into the Input box will be sent to the CPU after pressing Ente
 
 Other information
 =================
-Program: In the top left, there will be a textbox that contains the text file you have opened.
-Memory: This is a visual representation of UVSim's memory, use this to compare with Program to ensure
+- **Program:** In the top left, there will be a textbox that contains the text file you have opened.
+- **Memory:** This is a visual representation of UVSim's memory, use this to compare with Program to ensure
 all words are being parsed correctly.  If they are not you will see a message pop up in the Output
-Output: This will be where any prompts for the user are displayed, any issues related to the text file,
+- **Output:** This will be where any prompts for the user are displayed, any issues related to the text file,
 required inputs, and the outputs of the code will be seen here.
-CPU: At the bottom of the screen, the Accumulator and Program Counter for the UVSim CPU are displayed and
+- **CPU:** At the bottom of the screen, the Accumulator and Program Counter for the UVSim CPU are displayed and
 updated as the program runs.
 
 
