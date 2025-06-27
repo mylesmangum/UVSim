@@ -53,7 +53,7 @@ public class UVSimGUI extends JFrame {
         JPanel programPanel = new JPanel(new BorderLayout());
         programPanel.add(new JLabel("Program:"), BorderLayout.NORTH);
         programArea = new JTextArea(10, 30);
-        programArea.setEditable(false);
+        programArea.setEditable(true);
         programArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         programPanel.add(new JScrollPane(programArea), BorderLayout.CENTER);
 
@@ -163,7 +163,7 @@ public class UVSimGUI extends JFrame {
                 String content = new String(Files.readAllBytes(Paths.get(currentFilePath)));
                 programArea.setText(content);
 
-                cpu = new UVCpu(currentFilePath);
+                cpu = new UVCpu();
                 UVConsole.setGUI(this);
 
                 statusLabel.setText("Loaded: " + file.getName());
@@ -180,7 +180,11 @@ public class UVSimGUI extends JFrame {
     }
 
     private void runProgram() {
-        if (cpu == null) return;
+        if (cpu == null) {
+            // user can type program without loading file
+            cpu = new UVCpu();
+            UVConsole.setGUI(this);
+        }
 
         outputArea.append("=== Running Program ===\n");
         runButton.setEnabled(false);
@@ -188,6 +192,8 @@ public class UVSimGUI extends JFrame {
         // run program in another thread
         new Thread(() -> {
             try {
+                loadProgramFromTextArea();
+
                 cpu.run();
                 SwingUtilities.invokeLater(() -> {
                     outputArea.append("=== Program Finished ===\n");
@@ -204,6 +210,39 @@ public class UVSimGUI extends JFrame {
             }
         }).start();
     }
+
+    private void loadProgramFromTextArea() {
+        String content = programArea.getText();
+        String[] lines = content.split("\n");
+
+        // Reset CPU
+        cpu.pc = 0;
+        cpu.acc = 0;
+        cpu.halted = false;
+
+        // Clear memory
+        for (int i = 0; i < 100; i++) {
+            cpu.mem.write(i, 0);
+        }
+
+        // Load instructions from text area
+        int memoryIndex = 0;
+        for (String line : lines) {
+            line = line.trim();
+            if (!line.isEmpty() && memoryIndex < 100) {
+                try {
+                    if (Memory.isWord(line)) {
+                        int instruction = Integer.parseInt(line);
+                        cpu.mem.write(memoryIndex, instruction);
+                        memoryIndex++;
+                    }
+                } catch (NumberFormatException e) {
+                    // Skip invalid lines
+                }
+            }
+        }
+    }
+
 
     private void handleInput() {
         String input = inputField.getText().trim();
