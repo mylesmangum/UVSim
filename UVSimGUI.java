@@ -18,6 +18,7 @@ public class UVSimGUI extends JFrame {
     private JTextArea memoryArea;
     private JTextField inputField;
     private JButton inputButton;
+    private JButton clearOutputButton;
     private JLabel statusLabel;
     private JLabel cpuLabel;
     private String pendingInput = null;
@@ -39,6 +40,8 @@ public class UVSimGUI extends JFrame {
         openButton = new JButton("Open Program File");
         runButton = new JButton("Run Program");
         runButton.setEnabled(false);
+        clearOutputButton = new JButton("Clear Output");
+        topPanel.add(clearOutputButton);
         statusLabel = new JLabel("No file loaded");
 
         topPanel.add(openButton);
@@ -138,6 +141,16 @@ public class UVSimGUI extends JFrame {
                 handleInput();
             }
         });
+        clearOutputButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                outputArea.setText("");
+                SwingUtilities.invokeLater(() -> {
+                    runButton.setEnabled(true);
+                    updateMemoryDisplay();
+                    updateCPUStatus();
+                });
+            }
+        });
     }
 
     private void openFile() {
@@ -181,6 +194,9 @@ public class UVSimGUI extends JFrame {
 
     private void runProgram() {
         if (cpu == null) return;
+        cpu.acc = 0;
+        cpu.pc = 0;
+        cpu.halted = false;
 
         outputArea.append("=== Running Program ===\n");
         runButton.setEnabled(false);
@@ -229,6 +245,9 @@ public class UVSimGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Please enter a valid number");
             }
         }
+        else{
+            JOptionPane.showMessageDialog(this, "Please enter a number.");
+        }
     }
 
     private void updateMemoryDisplay() {
@@ -262,6 +281,10 @@ public class UVSimGUI extends JFrame {
             updateCPUStatus();
             updateMemoryDisplay();
         });
+
+
+
+
     }
 
     public String getInput() {
@@ -278,6 +301,10 @@ public class UVSimGUI extends JFrame {
             }
         }
         return pendingInput;
+    }
+
+    public void restart(){
+
     }
 
     public static void main(String[] args) {
