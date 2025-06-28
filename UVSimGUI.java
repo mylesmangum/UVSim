@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,6 +14,7 @@ public class UVSimGUI extends JFrame {
     private String currentFilePath = "";
     private JButton openButton;
     private JButton runButton;
+    private JButton saveButton;
     private JTextArea programArea;
     private JTextArea outputArea;
     private JTextArea memoryArea;
@@ -37,6 +39,7 @@ public class UVSimGUI extends JFrame {
 
 
         JPanel topPanel = new JPanel();
+        saveButton = new JButton("Save As");
         openButton = new JButton("Open Program File");
         runButton = new JButton("Run Program");
         runButton.setEnabled(false);
@@ -44,6 +47,7 @@ public class UVSimGUI extends JFrame {
         topPanel.add(clearOutputButton);
         statusLabel = new JLabel("No file loaded");
 
+        topPanel.add(saveButton);
         topPanel.add(openButton);
         topPanel.add(runButton);
         topPanel.add(statusLabel);
@@ -135,6 +139,10 @@ public class UVSimGUI extends JFrame {
             }
         });
 
+        saveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { saveFile();}
+        });
+
         // allow enter key press
         inputField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -190,6 +198,29 @@ public class UVSimGUI extends JFrame {
                 statusLabel.setText("Error loading file");
             }
         }
+    }
+
+    private void saveFile() {
+        String savedContent = programArea.getText();
+        JFileChooser chooser = new JFileChooser(currentDirectoryPath);
+        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().endsWith(".txt");
+            }
+            public String getDescription() {
+                return "Text Files (*.txt)";
+            }
+        });
+        int savable = chooser.showSaveDialog(this);
+        if (savable == JFileChooser.APPROVE_OPTION) {
+            try(FileWriter writer = new FileWriter(chooser.getSelectedFile())) {
+                writer.write(savedContent.toString());
+                writer.flush();
+            } catch (IOException ex){
+                JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
+            }
+        }
+        return;
     }
 
     private void runProgram() {
