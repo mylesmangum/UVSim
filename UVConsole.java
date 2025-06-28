@@ -50,10 +50,13 @@ public class UVConsole {
         }
     }
     public static void displayMalformedLine(String line) {
+        String message = String.format(
+                "Skipped malformed line: %s\nOnly signed 4-digit numbers are allowed.\n", line);
+
         if (gui != null) {
-            UVConsole.displayOutput(String.format("It seems that a line in your file is not a 4 digit word.\nThe line causing issues is:\n%s\nThis line has been skipped in case it's a comment.\n", line));
+            UVConsole.displayOutput(message);
         } else {
-            System.out.printf("It seems that a line in your file is not a 4 digit word.\nThe line causing issues is:\n%s\nThis line has been skipped in case it's a comment.\n", line);
+            System.out.print(message);
         }
 
     }
