@@ -60,8 +60,6 @@ public class Memory {
     }
 
     public static boolean isWord(String value) { //changed to take a string, match it to be 5 chars
-
-
         return value.length() == 5;
     }
 

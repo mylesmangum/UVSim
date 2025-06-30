@@ -213,14 +213,18 @@ public class UVSimGUI extends JFrame {
         });
         int savable = chooser.showSaveDialog(this);
         if (savable == JFileChooser.APPROVE_OPTION) {
-            try(FileWriter writer = new FileWriter(chooser.getSelectedFile())) {
-                writer.write(savedContent.toString());
-                writer.flush();
-            } catch (IOException ex){
-                JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
+            boolean validFormat = validateFileFormatting(savedContent);
+            if (validFormat) {
+                try (FileWriter writer = new FileWriter(chooser.getSelectedFile())) {
+                    writer.write(savedContent.toString());
+                    writer.flush();
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
+                }
+            } else {
+            JOptionPane.showMessageDialog(this, "Please have each line be one word each when saving.  Each word must be 4 digits long and have a plus or minus before the word.");
             }
         }
-        return;
     }
 
     private void runProgram() {
@@ -370,6 +374,21 @@ public class UVSimGUI extends JFrame {
             }
         }
         return pendingInput;
+    }
+
+    private boolean validateFileFormatting(String text) {
+        String[] words = text.split("\\r?\\n");
+        for(String word : words) {
+            if (word.length() != 5){
+                return false;
+            }
+            try {
+                int value = Integer.parseInt(word);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void restart(){
