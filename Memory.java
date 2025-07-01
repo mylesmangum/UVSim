@@ -4,8 +4,10 @@ import java.util.Scanner;
 
 public class Memory {
     int[] memoryArray = new int[100];
+    private UVSimGUI gui;
 
-    public Memory(String fileName) {
+    public Memory(String fileName, UVSimGUI gui) {
+        this.gui = gui; // 👈 save the reference
         if (fileName.endsWith(".txt")) {
             memoryArray = readText(fileName);
         } else {
@@ -13,11 +15,11 @@ public class Memory {
         }
     }
     public int read(int address) {
-        checkIndex(address);
+//        checkIndex(address);
         return memoryArray[address];
     }
     public void write(int address, int value) {
-        checkIndex(address);
+//        checkIndex(address);
         memoryArray[address] = value;
     }
     public int[] readText(String fileName) {
@@ -35,29 +37,24 @@ public class Memory {
                     i++;
                 }
                 else {
-                    UVConsole.displayMalformedLine(line);
+                    gui.displayMalformedLine(line);
                     //System.out.printf("in else");
 
                 }
                 }catch(NumberFormatException e) {
-                    UVConsole.displayMalformedLine(line);
+                    gui.displayMalformedLine(line);
                     //System.out.printf("in catch");
 
                 }
 
             }
         } catch (FileNotFoundException e) {
-            System.out.printf("File %s not found, please make sure the file is in the same folder as this program.\n", fileName);
-            return readText(UVConsole.getFile());
+            gui.displayOutput("File not found" + fileName);
         }
         return myArray;
     }
 
-    private void checkIndex(int address) {
-        if (address > 99 || address < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-    }
+
 
     public static boolean isWord(String value) { //changed to take a string, match it to be 5 chars
 

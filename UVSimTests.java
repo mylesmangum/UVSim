@@ -2,7 +2,6 @@ import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.*;
@@ -10,6 +9,7 @@ import java.io.*;
 public class UVSimTests {
 
     private Memory testMemory;
+    private UVSimGUI gui;
 
     @Before
     public void setUp() {
@@ -21,7 +21,7 @@ public class UVSimTests {
             writer.write("4300\n");
             writer.close();
 
-            testMemory = new Memory("Test1.txt");
+            testMemory = new Memory("Test1.txt", gui);
 
             testFile.delete();
         } catch (IOException e) {
@@ -364,35 +364,22 @@ public class UVSimTests {
 
     @Test
     public void readTextFail() {
-        Memory badMem = new Memory("Test0.txt");
+        Memory badMem = new Memory("Test0.txt", gui);
         int[] emptyArray = new int[100];
         assertArrayEquals(emptyArray, badMem.memoryArray);
     }
-    /*
-    @Test
-    public void isWord() {
-        assertTrue(Memory.isWord(1000));
-        assertFalse(Memory.isWord(100));
-    }
-    */
+
     // // // // // // // // // // // // // // // // // // // // // // // // // // //
     // // // // // // // // // //  Memory Tests  // // // // // // // // // // // //
     // // // // // // // // // // // // // // // // // // // // // // // // // // //
     @Test
     public void testUserInt() {
         provideInput("123");
-        int input = UVConsole.userInputInt();
+        int input = gui.userInputInt();
         provideInput("-456");
         assertEquals(123, input);
-        input = UVConsole.userInputInt();
+        input = gui.userInputInt();
         assertEquals(-456, input);
-    }
-
-    @Test
-    public void testGetFile() {
-        provideInput("ABC123");
-        String input = UVConsole.getFile();
-        assertEquals("ABC123", input);
     }
 
     public void provideInput(String data) {
