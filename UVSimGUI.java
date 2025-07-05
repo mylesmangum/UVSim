@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.InputMismatchException;
@@ -13,6 +15,7 @@ public class UVSimGUI extends JFrame {
     private String currentFilePath = "";
     private JButton openButton;
     private JButton runButton;
+    private JButton saveButton;
     private JTextArea programArea;
     private JTextArea outputArea;
     private JTextArea memoryArea;
@@ -38,6 +41,7 @@ public class UVSimGUI extends JFrame {
 
 
         JPanel topPanel = new JPanel();
+        saveButton = new JButton("Save As");
         openButton = new JButton("Open Program File");
         runButton = new JButton("Run Program");
         runButton.setEnabled(false);
@@ -47,6 +51,7 @@ public class UVSimGUI extends JFrame {
         topPanel.add(restartButton);
         statusLabel = new JLabel("No file loaded");
 
+        topPanel.add(saveButton);
         topPanel.add(openButton);
         topPanel.add(runButton);
         topPanel.add(statusLabel);
@@ -59,7 +64,7 @@ public class UVSimGUI extends JFrame {
         JPanel programPanel = new JPanel(new BorderLayout());
         programPanel.add(new JLabel("Program:"), BorderLayout.NORTH);
         programArea = new JTextArea(10, 30);
-        programArea.setEditable(false);
+        programArea.setEditable(true);
         programArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         programPanel.add(new JScrollPane(programArea), BorderLayout.CENTER);
 
@@ -138,6 +143,10 @@ public class UVSimGUI extends JFrame {
             }
         });
 
+        saveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { saveFile();}
+        });
+
         // allow enter key press
         inputField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -180,6 +189,7 @@ public class UVSimGUI extends JFrame {
                 String content = new String(Files.readAllBytes(Paths.get(currentFilePath)));
                 programArea.setText(content);
 
+
                 cpu = new UVCpu(currentFilePath, this);
 
 
@@ -196,11 +206,41 @@ public class UVSimGUI extends JFrame {
         }
     }
 
+    private void saveFile() {
+        String savedContent = programArea.getText();
+        JFileChooser chooser = new JFileChooser(currentDirectoryPath);
+        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().endsWith(".txt");
+            }
+            public String getDescription() {
+                return "Text Files (*.txt)";
+            }
+        });
+        int savable = chooser.showSaveDialog(this);
+        if (savable == JFileChooser.APPROVE_OPTION) {
+            boolean validFormat = validateFileFormatting(savedContent);
+            if (validFormat) {
+                try (FileWriter writer = new FileWriter(chooser.getSelectedFile())) {
+                    writer.write(savedContent.toString());
+                    writer.flush();
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
+                }
+            } else {
+            JOptionPane.showMessageDialog(this, "Please have each line be one word each when saving.  Each word must be 4 digits long and have a plus or minus before the word.");
+            }
+        }
+    }
+
     private void runProgram() {
-        if (cpu == null) return;
-        cpu.acc = 0;
-        cpu.pc = 0;
-        cpu.halted = false;
+
+        if (cpu == null) {
+            // user can type program without loading file
+            cpu = new UVCpu();
+            UVConsole.setGUI(this);
+        }
+
 
         outputArea.append("=== Running Program ===\n");
         runButton.setEnabled(false);
@@ -208,6 +248,8 @@ public class UVSimGUI extends JFrame {
         // run program in another thread
         new Thread(() -> {
             try {
+                loadProgramFromTextArea();
+
                 cpu.run();
                 SwingUtilities.invokeLater(() -> {
                     outputArea.append("=== Program Finished ===\n");
@@ -224,6 +266,39 @@ public class UVSimGUI extends JFrame {
             }
         }).start();
     }
+
+    private void loadProgramFromTextArea() {
+        String content = programArea.getText();
+        String[] lines = content.split("\n");
+
+        // Reset CPU
+        cpu.pc = 0;
+        cpu.acc = 0;
+        cpu.halted = false;
+
+        // Clear memory
+        for (int i = 0; i < 100; i++) {
+            cpu.mem.write(i, 0);
+        }
+
+        // Load instructions from text area
+        int memoryIndex = 0;
+        for (String line : lines) {
+            line = line.trim();
+            if (!line.isEmpty() && memoryIndex < 100) {
+                try {
+                    if (Memory.isWord(line)) {
+                        int instruction = Integer.parseInt(line);
+                        cpu.mem.write(memoryIndex, instruction);
+                        memoryIndex++;
+                    }
+                } catch (NumberFormatException e) {
+                    // Skip invalid lines
+                }
+            }
+        }
+    }
+
 
     private void handleInput() {
         String input = inputField.getText().trim();
@@ -304,6 +379,7 @@ public class UVSimGUI extends JFrame {
         return pendingInput;
     }
 
+
     public void restart() {
         if (currentFilePath == null || currentFilePath.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No file loaded to restart.");
@@ -325,13 +401,27 @@ public class UVSimGUI extends JFrame {
 
             runButton.setEnabled(true);
 
+
             statusLabel.setText("Restarted: " + Paths.get(currentFilePath).getFileName());
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error restarting: " + ex.getMessage());
         }
     }
-
+    private boolean validateFileFormatting(String text) {
+        String[] words = text.split("\\r?\\n");
+        for(String word : words) {
+            if (word.length() != 5){
+                return false;
+            }
+            try {
+                int value = Integer.parseInt(word);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
