@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.InputMismatchException;
 
 public class UVSimGUI extends JFrame {
     private UVCpu cpu;
@@ -24,6 +25,7 @@ public class UVSimGUI extends JFrame {
     private JLabel statusLabel;
     private JLabel cpuLabel;
     private String pendingInput = null;
+    private JButton restartButton;
 
     public UVSimGUI() {
         setupGUI();
@@ -45,6 +47,8 @@ public class UVSimGUI extends JFrame {
         runButton.setEnabled(false);
         clearOutputButton = new JButton("Clear Output");
         topPanel.add(clearOutputButton);
+        restartButton = new JButton("Restart Program");
+        topPanel.add(restartButton);
         statusLabel = new JLabel("No file loaded");
 
         topPanel.add(saveButton);
@@ -159,6 +163,7 @@ public class UVSimGUI extends JFrame {
                 });
             }
         });
+        restartButton.addActionListener(e -> restart());
     }
 
     private void openFile() {
@@ -184,8 +189,9 @@ public class UVSimGUI extends JFrame {
                 String content = new String(Files.readAllBytes(Paths.get(currentFilePath)));
                 programArea.setText(content);
 
-                cpu = new UVCpu();
-                UVConsole.setGUI(this);
+
+                cpu = new UVCpu(currentFilePath, this);
+
 
                 statusLabel.setText("Loaded: " + file.getName());
                 runButton.setEnabled(true);
@@ -355,9 +361,6 @@ public class UVSimGUI extends JFrame {
             updateMemoryDisplay();
         });
 
-
-
-
     }
 
     public String getInput() {
@@ -376,6 +379,35 @@ public class UVSimGUI extends JFrame {
         return pendingInput;
     }
 
+
+    public void restart() {
+        if (currentFilePath == null || currentFilePath.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No file loaded to restart.");
+            return;
+        }
+
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(currentFilePath)));
+            programArea.setText(content);
+
+            cpu = new UVCpu(currentFilePath, this);
+
+            outputArea.setText("Program restarted.\n");
+            inputField.setText("");
+            inputButton.setEnabled(false);
+
+            updateCPUStatus();
+            updateMemoryDisplay();
+
+            runButton.setEnabled(true);
+
+
+            statusLabel.setText("Restarted: " + Paths.get(currentFilePath).getFileName());
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error restarting: " + ex.getMessage());
+        }
+    }
     private boolean validateFileFormatting(String text) {
         String[] words = text.split("\\r?\\n");
         for(String word : words) {
@@ -391,13 +423,28 @@ public class UVSimGUI extends JFrame {
         return true;
     }
 
-    public void restart(){
-
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new UVSimGUI().setVisible(true);
         });
+    }
+
+    public void displayMalformedLine(String line) {
+        String message = String.format(
+                "Skipped malformed line: %s\nOnly signed 4-digit numbers are allowed.\n", line);
+
+        displayOutput(message);
+    }
+
+    public int userInputInt() {
+
+        displayOutput("Enter a signed four digit word: ");
+        String input = getInput();
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            throw new InputMismatchException("Input was not an integer");
+        }
+
     }
 }
