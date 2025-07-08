@@ -186,6 +186,10 @@ public class UVSimGUI extends JFrame {
             UVConsole.setGUI(this);
         }
 
+        if (!validateInstructionCount()) {
+            return; // Don't run if there are too many instructions
+        }
+
         outputArea.append("=== Running Program ===\n");
         runButton.setEnabled(false);
 
@@ -214,18 +218,14 @@ public class UVSimGUI extends JFrame {
     private void loadProgramFromTextArea() {
         String content = programArea.getText();
         String[] lines = content.split("\n");
-
-        // Reset CPU
         cpu.pc = 0;
         cpu.acc = 0;
         cpu.halted = false;
 
-        // Clear memory
         for (int i = 0; i < 100; i++) {
             cpu.mem.write(i, 0);
         }
 
-        // Load instructions from text area
         int memoryIndex = 0;
         for (String line : lines) {
             line = line.trim();
@@ -241,6 +241,36 @@ public class UVSimGUI extends JFrame {
                 }
             }
         }
+    }
+
+    private boolean validateInstructionCount() {
+        String content = programArea.getText();
+        String[] lines = content.split("\n");
+
+        int validInstructionCount = 0;
+        for (String line : lines) {
+            line = line.trim();
+            if (!line.isEmpty()) {
+                try {
+                    if (Memory.isWord(line)) {
+                        validInstructionCount++;
+                    }
+                } catch (NumberFormatException e) {
+                    // Skip invalid lines
+                }
+            }
+        }
+
+        if (validInstructionCount > 100) {
+            JOptionPane.showMessageDialog(this,
+                    "Error: Program contains " + validInstructionCount + " instructions.\n" +
+                            "Maximum allowed is 100 instructions.",
+                    "Too Many Instructions",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
     }
 
 
