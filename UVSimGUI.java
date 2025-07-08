@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.InputMismatchException;
+import java.util.prefs.*;
 
 public class UVSimGUI extends JFrame {
     private UVCpu cpu;
@@ -26,6 +27,14 @@ public class UVSimGUI extends JFrame {
     private JLabel cpuLabel;
     private String pendingInput = null;
     private JButton restartButton;
+    private JButton customizeButton;
+    private JPanel colorPanel;
+    private JButton primaryColor;
+    private JButton secondaryColor;
+
+    public static final String PRIMARY = "primary";
+    public static final String SECONDARY = "secondary";
+
 
     public UVSimGUI() {
         setupGUI();
@@ -33,6 +42,23 @@ public class UVSimGUI extends JFrame {
     }
 
     private void setupGUI() {
+        Preferences prefs = Preferences.userNodeForPackage(UVSimGUI.class);
+        Color primary;
+        Color secondary;
+        if(prefs.get(PRIMARY,"default") == "default"){
+            primary = new Color(36,93,56);
+        }
+        else{
+            primary = getColor(prefs.get(PRIMARY, "default"));
+        }
+        if(prefs.get(SECONDARY, "default") == "default"){
+            secondary = new Color(35,31,32);
+        }
+        else{
+            secondary = getColor(prefs.get(SECONDARY, "default"));
+        }
+        System.out.println(primary.toString());
+        System.out.println(secondary.toString());
 
         setTitle("UVSimGUI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,14 +76,27 @@ public class UVSimGUI extends JFrame {
         restartButton = new JButton("Restart Program");
         topPanel.add(restartButton);
         statusLabel = new JLabel("No file loaded");
+        customizeButton = new JButton("Customize");
+        topPanel.setBackground(primary);
+
+
 
         topPanel.add(saveButton);
         topPanel.add(openButton);
         topPanel.add(runButton);
         topPanel.add(statusLabel);
+        topPanel.add(customizeButton);
+        //color the buttons
+        for(Component c : topPanel.getComponents()){
+            c.setBackground(secondary);
+            c.setForeground(Color.black);
+        }
 
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 5, 5));
         JPanel leftPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        centerPanel.setBackground(primary);
+
+        leftPanel.setBackground(primary);
 
 
         // Program panel
@@ -80,7 +119,7 @@ public class UVSimGUI extends JFrame {
         leftPanel.add(programPanel);
         leftPanel.add(memoryPanel);
         JPanel rightPanel = new JPanel(new BorderLayout());
-
+        rightPanel.setBackground(primary);
 
         // Output panel
         JPanel outputPanel = new JPanel(new BorderLayout());
@@ -116,14 +155,32 @@ public class UVSimGUI extends JFrame {
         cpuLabel = new JLabel("CPU: Accumulator=0, Program Counter=0");
         cpuLabel.setFont(new Font("Monospaced", Font.BOLD, 12));
         bottomPanel.add(cpuLabel);
+        bottomPanel.setBackground(primary);
 
         add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
 
         setLocationRelativeTo(null);
+
+
+        colorPanel = new JPanel();
+        colorPanel.setLayout(new GridLayout(5,5));
+        colorPanel.setVisible(false);
+        primaryColor = new JButton("Primary Color");
+        secondaryColor = new JButton("Secondary Color");
+        colorPanel.add(primaryColor);
+        colorPanel.add(secondaryColor);
+        add(colorPanel, BorderLayout.EAST);
+        colorPanel.setBackground(primary);
+        for(Component c : colorPanel.getComponents()){
+            c.setForeground(Color.black);
+            c.setBackground(secondary);
+        }
     }
 
+
+    //action listeners
     private void setupEvents() {
         openButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -164,8 +221,34 @@ public class UVSimGUI extends JFrame {
             }
         });
         restartButton.addActionListener(e -> restart());
+
+        customizeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                colorPanel.setVisible(!colorPanel.isVisible());
+
+            }
+        });
+        primaryColor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Color p;
+                p = JColorChooser.showDialog(colorPanel, "Select Color", Color.black);
+                Preferences prefs = Preferences.userNodeForPackage(UVSimGUI.class);
+                prefs.put(PRIMARY, p.toString());
+
+            }
+        });
+        secondaryColor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Color s;
+                s = JColorChooser.showDialog(colorPanel, "Select Color", Color.black);
+                Preferences prefs = Preferences.userNodeForPackage(UVSimGUI.class);
+                prefs.put(SECONDARY, s.toString());
+            }
+        });
     }
 
+
+    //called functions
     private void openFile() {
 
         JFileChooser chooser = new JFileChooser(currentDirectoryPath);
@@ -238,7 +321,7 @@ public class UVSimGUI extends JFrame {
         if (cpu == null) {
             // user can type program without loading file
             cpu = new UVCpu();
-            UVConsole.setGUI(this);
+            //UVConsole.setGUI(this);
         }
 
 
@@ -447,4 +530,31 @@ public class UVSimGUI extends JFrame {
         }
 
     }
+    private Color getColor(String toCol){
+        if (toCol == null || !toCol.startsWith("java.awt.Color[r=")) {
+            throw new IllegalArgumentException("Invalid Color string format.");
+        }
+        String components = toCol.substring(toCol.indexOf("[") + 1, toCol.indexOf("]"));
+
+        // Split by comma
+        String[] parts = components.split(",");
+
+        int r = 0, g = 0, b = 0, a = 255; // Default alpha to 255 (opaque)
+
+        for (String part : parts) {
+            if (part.startsWith("r=")) {
+                r = Integer.parseInt(part.substring(2));
+            } else if (part.startsWith("g=")) {
+                g = Integer.parseInt(part.substring(2));
+            } else if (part.startsWith("b=")) {
+                b = Integer.parseInt(part.substring(2));
+            } else if (part.startsWith("a=")) {
+                a = Integer.parseInt(part.substring(2));
+            }
+        }
+        return new Color(r, g, b, a);
+    }
+
+
+
 }
