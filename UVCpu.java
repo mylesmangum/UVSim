@@ -30,7 +30,7 @@
         public static final int overflowLimit = 9999; //Used to mark limit
 
         public void run() {
-            int instruction;
+            MemoryRegister instruction;
             int opcode;
             int address;
             while (!halted) {
@@ -42,17 +42,17 @@
                     acc = sign * (Math.abs(acc) % 10000);
                 }
                 instruction = mem.read(pc); //read memory address at pc value into instruction
-                address = instruction % 100; //modulo division to get last two digits
-                opcode = instruction / 100; //int division to get first two digits
+                address = instruction.getAddress(); //modulo division to get last two digits
+                opcode = instruction.getOpCode(); //int division to get first two digits
                 //if division has problems just turn instruction into a string or char array instead
 
-                int value = mem.read(address);
+                int value = mem.read(address).getValue();
                 switch (opcode) {
                     case 10: //read from keyboard, write to memory
                         mem.write(address, gui.userInputInt());
                         break;
                     case 11: //write a word from location in memory to screen
-                        gui.displayOutput(String.valueOf(mem.read(address)));
+                        gui.displayOutput(String.valueOf(mem.read(address).getValue()));
                         break;
                     case 20: //load from memory into accumulator
                         acc = value;

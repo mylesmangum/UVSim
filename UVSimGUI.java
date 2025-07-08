@@ -453,7 +453,7 @@ public class UVSimGUI extends JFrame {
         sb.append("----  -----\n");
 
         for (int i = 0; i < 100; i++) {
-            int value = cpu.mem.read(i);
+            int value = cpu.mem.read(i).getValue();
             if (value != 0) {
                 sb.append(String.format("%02d    %+05d\n", i, value));
             }
