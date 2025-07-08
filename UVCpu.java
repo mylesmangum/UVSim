@@ -5,6 +5,7 @@
         //split number into opcode and address
         public String testName = "";
         public Memory mem;
+        private UVSimGUI gui;
 
         //Using for testing
         public UVCpu() {
@@ -12,21 +13,26 @@
         }
 
 
-     public UVCpu(String fileName) {
-            this.testName = fileName;
-            this.mem = new Memory(testName);
-        }
+         public UVCpu(String fileName, UVSimGUI gui) {
+             this.testName = fileName;
+             this.gui = gui;
+             this.mem = new Memory(fileName, gui); // ✅ pass GUI into memory
+         }
 
-        //Console con = new Console();
+        private void checkIndex(int address) {
+             if (address > 99 || address < 0) {
+                 throw new IndexOutOfBoundsException();
+             }
+         }
 
         int pc = 0, acc = 0; // program counter, accumulator
         boolean halted = false;
         public static final int overflowLimit = 9999; //Used to mark limit
 
         public void run() {
-            int instruction = 0;
-            int opcode = 0;
-            int address = 0;
+            int instruction;
+            int opcode;
+            int address;
             while (!halted) {
                 //checks for overflow
                 if (Math.abs(acc) > overflowLimit) {
@@ -43,10 +49,10 @@
                 int value = mem.read(address);
                 switch (opcode) {
                     case 10: //read from keyboard, write to memory
-                        mem.write(address, UVConsole.userInputInt());
+                        mem.write(address, gui.userInputInt());
                         break;
                     case 11: //write a word from location in memory to screen
-                        UVConsole.displayOutput(String.valueOf(mem.read(address)));
+                        gui.displayOutput(String.valueOf(mem.read(address)));
                         break;
                     case 20: //load from memory into accumulator
                         acc = value;

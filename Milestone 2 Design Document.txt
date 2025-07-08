@@ -17,13 +17,6 @@ Fields: int pc (program counter), int acc (accumulator), boolean halted, and a r
 void run() keeps looping until halted is true, calling fetch() and decode().
 
 
-
-UVConsole Class
-An I/O interface that captures input and output to the console.
-String readLine() and void println(String s) provide this functionality.
-
-
-
 User Stories
 As a CS student, I want to run my BasicML program inside UVSim so that I can debug my homework quickly by watching how each instruction affects the accumulator and memory.
 
