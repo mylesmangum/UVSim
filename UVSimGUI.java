@@ -324,6 +324,9 @@ public class UVSimGUI extends JFrame {
             //UVConsole.setGUI(this);
         }
 
+        if (!validateInstructionCount()) {
+            return; // Don't run if there are too many instructions
+        }
 
         outputArea.append("=== Running Program ===\n");
         runButton.setEnabled(false);
@@ -380,6 +383,36 @@ public class UVSimGUI extends JFrame {
                 }
             }
         }
+    }
+
+    private boolean validateInstructionCount() {
+        String content = programArea.getText();
+        String[] lines = content.split("\n");
+
+        int validInstructionCount = 0;
+        for (String line : lines) {
+            line = line.trim();
+            if (!line.isEmpty()) {
+                try {
+                    if (Memory.isWord(line)) {
+                        validInstructionCount++;
+                    }
+                } catch (NumberFormatException e) {
+                    // Skip invalid lines
+                }
+            }
+        }
+
+        if (validInstructionCount > 100) {
+            JOptionPane.showMessageDialog(this,
+                    "Error: Program contains " + validInstructionCount + " instructions.\n" +
+                            "Maximum allowed is 100 instructions.",
+                    "Too Many Instructions",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -443,7 +476,6 @@ public class UVSimGUI extends JFrame {
             updateCPUStatus();
             updateMemoryDisplay();
         });
-
     }
 
     public String getInput() {
