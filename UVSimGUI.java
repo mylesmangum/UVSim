@@ -18,6 +18,7 @@ public class UVSimGUI extends JFrame {
     private JTextArea memoryArea;
     private JTextField inputField;
     private JButton inputButton;
+    private JButton clearOutputButton;
     private JLabel statusLabel;
     private JLabel cpuLabel;
     private String pendingInput = null;
@@ -39,6 +40,8 @@ public class UVSimGUI extends JFrame {
         openButton = new JButton("Open Program File");
         runButton = new JButton("Run Program");
         runButton.setEnabled(false);
+        clearOutputButton = new JButton("Clear Output");
+        topPanel.add(clearOutputButton);
         statusLabel = new JLabel("No file loaded");
 
         topPanel.add(openButton);
@@ -138,6 +141,16 @@ public class UVSimGUI extends JFrame {
                 handleInput();
             }
         });
+        clearOutputButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                outputArea.setText("");
+                SwingUtilities.invokeLater(() -> {
+                    runButton.setEnabled(true);
+                    updateMemoryDisplay();
+                    updateCPUStatus();
+                });
+            }
+        });
     }
 
     private void openFile() {
@@ -180,6 +193,7 @@ public class UVSimGUI extends JFrame {
     }
 
     private void runProgram() {
+
         if (cpu == null) {
             // user can type program without loading file
             cpu = new UVCpu();
@@ -218,14 +232,18 @@ public class UVSimGUI extends JFrame {
     private void loadProgramFromTextArea() {
         String content = programArea.getText();
         String[] lines = content.split("\n");
+
+        // Reset CPU
         cpu.pc = 0;
         cpu.acc = 0;
         cpu.halted = false;
 
+        // Clear memory
         for (int i = 0; i < 100; i++) {
             cpu.mem.write(i, 0);
         }
 
+        // Load instructions from text area
         int memoryIndex = 0;
         for (String line : lines) {
             line = line.trim();
@@ -298,6 +316,9 @@ public class UVSimGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Please enter a valid number");
             }
         }
+        else{
+            JOptionPane.showMessageDialog(this, "Please enter a number.");
+        }
     }
 
     private void updateMemoryDisplay() {
@@ -347,6 +368,10 @@ public class UVSimGUI extends JFrame {
             }
         }
         return pendingInput;
+    }
+
+    public void restart(){
+
     }
 
     public static void main(String[] args) {
