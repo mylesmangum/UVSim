@@ -57,14 +57,15 @@ public class Memory {
         return myArray;
     }
 
-
-
-    public static boolean isWord(String value) { //changed to take a string, match it to be 5 chars
-        return value.length() == 5;
+    public static boolean isWord(String value) {
+        return value.matches("[-+][0-9]{4}");
     }
 
     //Using for UVCpu Testing without needing fileName
     public Memory() {
         memoryArray = new MemoryRegister[100];
+        for (int i = 0; i < 100; i++) {
+            memoryArray[i] = new MemoryRegister();
+        }
     }
 }
