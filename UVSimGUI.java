@@ -57,8 +57,7 @@ public class UVSimGUI extends JFrame {
         else{
             secondary = getColor(prefs.get(SECONDARY, "default"));
         }
-        System.out.println(primary.toString());
-        System.out.println(secondary.toString());
+
 
         setTitle("UVSimGUI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
