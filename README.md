@@ -4,55 +4,61 @@ UVSim
 DESCRIPTION:
 UVSim is a virtual machine simulator that executes programs written in BasicML.
 The simulator includes a CPU, accumulator register, and 100-word memory.
+Users can load, edit, and run BasicML programs within a user-friendly GUI.
+
+FEATURES:
+- Java-based desktop GUI with program, memory, and output panes.
+- Load, edit, and save BasicML programs.
+- Step-free execution with real-time output.
+- Input prompt for READ instructions.
+- Restart functionality for quick reloads.
+- GUI customization (color themes persist across runs).
+- Visual memory + CPU state updates.
+- Error handling for invalid input, malformed lines, and overflows.
+- JUnit test suite included.
 
 PREREQUISITES:
-- Java Development Kit (JDK) 8 or higher
-- JUnit 4 or higher for running tests
+- Java JDK 8 or higher
+- JUnit 4 (for testing)
 
 COMPILATION:
 The application has been precompiled into a jar file that is within the repo.
 The file named "UVSim.jar" is what you need to run the program.
 
 RUNNING THE APPLICATION:
-This is a desktop application that will utilize outside files.  For ease of access,
-please place any BasicML text files within the same folder as your UVSim.jar file.
-To launch the program, attempt to double click the UVSim.jar file, if this doesn't work,
-input "java -jar UVSim.jar" into your terminal
-You should see a GUI launch, with a few different possible inputs, below are instructions
-on each section and button.
+1. Ensure `UVSim.jar` and any `.txt` BasicML files are in the same folder.
+2. Run the program:
+    - **Double-click** `UVSim.jar`, or
+    - Use terminal: `java -jar UVSim.jar`
+3. The GUI will launch.
 
+### GUI Overview
 
-Open Program File
-=================
-Selecting this option will open up a secondary menu.  This menu will open up into your local folder, where
-UVSim.jar is located.  From here, select a text file to be loaded into memory
+#### Top Buttons
+- **Open Program File**: Load a `.txt` BasicML file from any file system.
+- **Run Program**: Execute loaded or edited instructions via file selected by user.
+- **Restart Program**: Reload the last opened file.
+- **Save As**: Save the current program (with format validation).
+- **Clear Output**: Clears the output pane.
+- **Customize**: Opens color selection tools (primary/secondary).
 
-Run Program
-=================
-After a file has been loaded, this button will be pressable.  Selecting this will run through your code, starting
-at where the Program Counter is pointing to in memory.  To rerun the code, you will need to reopen the file with 
-Open Program File.
+#### Program Pane
+Edit or review the loaded code. Each line must be a signed 4-digit word.
 
+#### Memory Pane
+Displays non-zero memory values and their addresses.
 
-Input
-=================
-The Output textbox will notify the user whenever input is required.  When input is requested by the Output, 
-any text inputted into the Input box will be sent to the CPU after pressing Enter.  Inputs must be between 
--9999 and 9999 and only an integer.  Any improper inputs will display an error.
+#### Output Pane
+Displays output from write instructions and other system messages.
 
-Other information
-=================
-- **Program:** In the top left, there will be a textbox that contains the text file you have opened.
-- **Memory:** This is a visual representation of UVSim's memory, use this to compare with Program to ensure
-all words are being parsed correctly.  If they are not you will see a message pop up in the Output
-- **Output:** This will be where any prompts for the user are displayed, any issues related to the text file,
-required inputs, and the outputs of the code will be seen here.
-- **CPU:** At the bottom of the screen, the Accumulator and Program Counter for the UVSim CPU are displayed and
-updated as the program runs.
+#### Input Field
+Prompts for user input when a read instruction is reached.
 
+#### CPU Status
+Shows the current accumulator and the program counter values in real time.
 
-FILE FORMAT:
-- BasicML programs should be text files
+## File Format:
+- Programs must be .txt files
 - Each line contains a signed 4-digit decimal number
 - Instructions start at memory location 00
 - Format: +XXYY where XX is the operation code and YY is the memory address
@@ -83,8 +89,11 @@ To run the unit tests, compile with JUnit and execute:
 java -cp .:junit-4.x.x.jar:hamcrest-core-x.x.x.jar org.junit.runner.JUnitCore UVSimTest
 
 SAMPLE FILES:
-- Test1.txt: input, addition, and output
-- Test2.txt: branching and comparison
+- Test1.txt: addition
+- Test2.txt: comparison
+- Test3.txt: overflow
+- Test4.txt: branching
+- Test5.txt: error handling
 
 ERROR HANDLING:
 - Division by zero throws ArithmeticException
