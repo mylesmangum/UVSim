@@ -365,7 +365,7 @@ public class UVSimTests {
     @Test
     public void readTextFail() {
         Memory badMem = new Memory("Test0.txt", gui);
-        int[] emptyArray = new int[100];
+        MemoryRegister[] emptyArray = new MemoryRegister[100];
         assertArrayEquals(emptyArray, badMem.memoryArray);
     }
 

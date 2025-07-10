@@ -3,7 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Memory {
-    int[] memoryArray = new int[100];
+    MemoryRegister[] memoryArray;
     private UVSimGUI gui;
 
     public Memory(String fileName, UVSimGUI gui) {
@@ -14,16 +14,19 @@ public class Memory {
             throw new RuntimeException("Invalid file format");
         }
     }
-    public int read(int address) {
+    public MemoryRegister read(int address) {
 //        checkIndex(address);
         return memoryArray[address];
     }
     public void write(int address, int value) {
 //        checkIndex(address);
-        memoryArray[address] = value;
+        memoryArray[address].setValue(value);
     }
-    public int[] readText(String fileName) {
-        int[] myArray = new int[100];
+    public MemoryRegister[] readText(String fileName) {
+        MemoryRegister[] myArray = new MemoryRegister[100];
+        for (int i = 0; i < 100; i++) {
+            myArray[i] = new MemoryRegister();
+        }
         try {
             File file = new File(fileName);
             Scanner scanner = new Scanner(file);
@@ -33,7 +36,7 @@ public class Memory {
                 try{
                 //int nextValue = Integer.parseInt(line); Changed to use just the string
                 if(isWord(line)) {
-                    myArray[i] = Integer.parseInt(line);
+                    myArray[i].setValue(Integer.parseInt(line));
                     i++;
                 }
                 else {
@@ -62,6 +65,6 @@ public class Memory {
 
     //Using for UVCpu Testing without needing fileName
     public Memory() {
-        memoryArray = new int[100];
+        memoryArray = new MemoryRegister[100];
     }
 }
