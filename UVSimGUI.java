@@ -52,7 +52,7 @@ public class UVSimGUI extends JFrame {
             primary = getColor(prefs.get(PRIMARY, "default"));
         }
         if(prefs.get(SECONDARY, "default") == "default"){
-            secondary = new Color(35,31,32);
+            secondary = new Color(255,255,255);
         }
         else{
             secondary = getColor(prefs.get(SECONDARY, "default"));
