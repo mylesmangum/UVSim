@@ -1,0 +1,35 @@
+SRS Final Form
+Functional Requirements
+
+The system will detect overflow of +9999 and -9999 and cut off the highest digit
+The system will display the memory in a distinct section in the GUI as addresses and values
+The system will take in a 4 digit number and interpret by separating by opcode and operand
+The system shall validate each line of the text file for any syntax errors
+The system will handle and display the write operation (11)
+The system will handle and prompt the user with the read operation (10)
+The system shall load program instructions from text files into memory. (20)
+The system shall store strings 4 digits long with a + or - in front into memory ex: +0000 (21)
+The system shall ADD a word from memory with the word in the accumulator and leave it in the accumulator when the opcode is 30
+The system shall SUBTRACT a word from memory with the word in the accumulator and leave it in the accumulator when the opcode is 31
+The system shall DIVIDE a word from the accumulator with a word in memory and leave it in the accumulator when the opcode is 32
+The system shall MULTIPLY a word from the accumulator with a word in memory and leave it in the accumulator when the opcode is 33
+The system shall handle BRANCH operation with opcode 40, 41, 42
+The system shall HALT the program with opcode 43
+The system will store the memory in a 100 length array
+The system will handle dividing by zero exceptions by halting the system
+The system shall have an accumulator register to temporarily hold a number string
+The system shall have a customize button that brings up a window with options to select colors
+The system shall let you change the background color to another color by clicking primary color
+The system shall let you change the button color to another color by clicking secondary color
+The system shall remember your color preferences
+The system shall save any text within the program text box to a file named by the user
+The system shall open .txt files from anywhere on the user’s computer to be displayed in the program text box
+The system shall allow editing of files in the UVSim graphical user interface
+The system shall display an error message if the program contains over 100 instructions
+
+Nonfunctional Requirements
+
+The system shall run on a machine with JDK 24 installed
+The system shall complete operations within 1 second
+The system will label all GUI widgets
+The system will handle all error messages by notifying the user without crashing
