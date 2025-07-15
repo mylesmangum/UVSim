@@ -71,19 +71,19 @@ public class UVSimGUI extends JFrame {
         runButton = new JButton("Run Program");
         runButton.setEnabled(false);
         clearOutputButton = new JButton("Clear Output");
-        topPanel.add(clearOutputButton);
         restartButton = new JButton("Restart Program");
-        topPanel.add(restartButton);
         statusLabel = new JLabel("No file loaded");
         customizeButton = new JButton("Customize");
         topPanel.setBackground(primary);
 
 
 
-        topPanel.add(saveButton);
+        topPanel.add(statusLabel);
         topPanel.add(openButton);
         topPanel.add(runButton);
-        topPanel.add(statusLabel);
+        topPanel.add(saveButton);
+        topPanel.add(restartButton);
+        topPanel.add(clearOutputButton);
         topPanel.add(customizeButton);
         //color the buttons
         for(Component c : topPanel.getComponents()){
