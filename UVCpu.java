@@ -19,15 +19,16 @@
              this.mem = new Memory(fileName, gui); // ✅ pass GUI into memory
          }
 
+         //changed to 249 bc changed array size
         private void checkIndex(int address) {
-             if (address > 99 || address < 0) {
+             if (address > 249 || address < 0) {
                  throw new IndexOutOfBoundsException();
              }
          }
 
         int pc = 0, acc = 0; // program counter, accumulator
         boolean halted = false;
-        public static final int overflowLimit = 9999; //Used to mark limit
+        public static final int overflowLimit = 999999; //Used to mark limit -- changed to 999999
 
         public void run() {
             MemoryRegister instruction;
@@ -39,7 +40,7 @@
                     int sign;
                     if (acc < 0) {sign = -1;}
                     else {sign = 1;}
-                    acc = sign * (Math.abs(acc) % 10000);
+                    acc = sign * (Math.abs(acc) % 1000000); //added to 0's because i'm not sure what this is doing but we changed the max num size
                 }
                 instruction = mem.read(pc); //read memory address at pc value into instruction
                 address = instruction.getAddress(); //modulo division to get last two digits
