@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.prefs.*;
 
@@ -32,11 +33,14 @@ public class UVSimGUI extends JFrame {
     private JButton primaryColor;
     private JButton secondaryColor;
 
+    private JTabbedPane tabbedPane;
+    private ArrayList<FileTab> fileTabs;
+
     public static final String PRIMARY = "primary";
     public static final String SECONDARY = "secondary";
 
-
     public UVSimGUI() {
+        fileTabs = new ArrayList<>();
         setupGUI();
         setupEvents();
     }
@@ -92,31 +96,12 @@ public class UVSimGUI extends JFrame {
         }
 
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 5, 5));
-        JPanel leftPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         centerPanel.setBackground(primary);
 
-        leftPanel.setBackground(primary);
+        tabbedPane = new JTabbedPane();
+        tabbedPane.setBackground(primary);
+        tabbedPane.addChangeListener(e -> updateUIForCurrentTab());
 
-
-        // Program panel
-        JPanel programPanel = new JPanel(new BorderLayout());
-        programPanel.add(new JLabel("Program:"), BorderLayout.NORTH);
-        programArea = new JTextArea(10, 30);
-        programArea.setEditable(true);
-        programArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        programPanel.add(new JScrollPane(programArea), BorderLayout.CENTER);
-
-
-        // Memory panel
-        JPanel memoryPanel = new JPanel(new BorderLayout());
-        memoryPanel.add(new JLabel("Memory:"), BorderLayout.NORTH);
-        memoryArea = new JTextArea(10, 30);
-        memoryArea.setEditable(false);
-        memoryArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        memoryPanel.add(new JScrollPane(memoryArea), BorderLayout.CENTER);
-
-        leftPanel.add(programPanel);
-        leftPanel.add(memoryPanel);
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(primary);
 
@@ -145,7 +130,7 @@ public class UVSimGUI extends JFrame {
         rightPanel.add(outputPanel, BorderLayout.CENTER);
         rightPanel.add(inputPanel, BorderLayout.SOUTH);
 
-        centerPanel.add(leftPanel);
+        centerPanel.add(tabbedPane);
         centerPanel.add(rightPanel);
 
 
@@ -246,6 +231,29 @@ public class UVSimGUI extends JFrame {
         });
     }
 
+    private FileTab getCurrentFileTab() {
+        int selectedIndex = tabbedPane.getSelectedIndex();
+        if (selectedIndex >= 0 && selectedIndex < fileTabs.size()) {
+            return fileTabs.get(selectedIndex);
+        }
+        return null;
+    }
+
+    private void updateUIForCurrentTab() {
+        FileTab currentTab = getCurrentFileTab();
+        if (currentTab != null) {
+            // Update references for compatibility with existing code
+            programArea = currentTab.programArea;
+            memoryArea = currentTab.memoryArea;
+            cpu = currentTab.cpu;
+            currentFilePath = currentTab.filePath;
+
+            statusLabel.setText("Loaded: " + currentTab.fileName);
+            runButton.setEnabled(true);
+            updateMemoryDisplay();
+            updateCPUStatus();
+        }
+    }
 
     //called functions
     private void openFile() {
@@ -269,11 +277,27 @@ public class UVSimGUI extends JFrame {
             try {
 
                 String content = new String(Files.readAllBytes(Paths.get(currentFilePath)));
-                programArea.setText(content);
 
+                FileTab fileTab = new FileTab(file.getName(), currentFilePath, this);
+                fileTab.programArea.setText(content);
+                fileTabs.add(fileTab);
 
-                cpu = new UVCpu(currentFilePath, this);
+                JPanel leftPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+                leftPanel.setBackground(new Color(36,93,56)); // Use primary color
 
+                JPanel programPanel = new JPanel(new BorderLayout());
+                programPanel.add(new JLabel("Program:"), BorderLayout.NORTH);
+                programPanel.add(new JScrollPane(fileTab.programArea), BorderLayout.CENTER);
+
+                JPanel memoryPanel = new JPanel(new BorderLayout());
+                memoryPanel.add(new JLabel("Memory:"), BorderLayout.NORTH);
+                memoryPanel.add(new JScrollPane(fileTab.memoryArea), BorderLayout.CENTER);
+
+                leftPanel.add(programPanel);
+                leftPanel.add(memoryPanel);
+
+                tabbedPane.addTab(file.getName(), leftPanel);
+                tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 
                 statusLabel.setText("Loaded: " + file.getName());
                 runButton.setEnabled(true);
@@ -289,7 +313,10 @@ public class UVSimGUI extends JFrame {
     }
 
     private void saveFile() {
-        String savedContent = programArea.getText();
+        FileTab currentTab = getCurrentFileTab();
+        if (currentTab == null) return;
+
+        String savedContent = currentTab.programArea.getText();
         JFileChooser chooser = new JFileChooser(currentDirectoryPath);
         chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
             public boolean accept(File f) {
@@ -310,17 +337,18 @@ public class UVSimGUI extends JFrame {
                     JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
                 }
             } else {
-            JOptionPane.showMessageDialog(this, "Please have each line be one word each when saving.  Each word must be 4 digits long and have a plus or minus before the word.");
+                JOptionPane.showMessageDialog(this, "Please have each line be one word each when saving.  Each word must be 4 digits long and have a plus or minus before the word.");
             }
         }
     }
 
     private void runProgram() {
+        FileTab currentTab = getCurrentFileTab();
+        if (currentTab == null) return;
 
-        if (cpu == null) {
+        if (currentTab.cpu == null) {
             // user can type program without loading file
-            cpu = new UVCpu();
-            //UVConsole.setGUI(this);
+            currentTab.cpu = new UVCpu();
         }
 
         if (!validateInstructionCount()) {
@@ -334,8 +362,7 @@ public class UVSimGUI extends JFrame {
         new Thread(() -> {
             try {
                 loadProgramFromTextArea();
-
-                cpu.run();
+                currentTab.cpu.run();
                 SwingUtilities.invokeLater(() -> {
                     outputArea.append("=== Program Finished ===\n");
                     runButton.setEnabled(true);
@@ -353,17 +380,20 @@ public class UVSimGUI extends JFrame {
     }
 
     private void loadProgramFromTextArea() {
-        String content = programArea.getText();
+        FileTab currentTab = getCurrentFileTab();
+        if (currentTab == null) return;
+
+        String content = currentTab.programArea.getText();
         String[] lines = content.split("\n");
 
         // Reset CPU
-        cpu.pc = 0;
-        cpu.acc = 0;
-        cpu.halted = false;
+        currentTab.cpu.pc = 0;
+        currentTab.cpu.acc = 0;
+        currentTab.cpu.halted = false;
 
         // Clear memory
         for (int i = 0; i < 100; i++) {
-            cpu.mem.write(i, 0);
+            currentTab.cpu.mem.write(i, 0);
         }
 
         // Load instructions from text area
@@ -374,7 +404,7 @@ public class UVSimGUI extends JFrame {
                 try {
                     if (Memory.isWord(line)) {
                         int instruction = Integer.parseInt(line);
-                        cpu.mem.write(memoryIndex, instruction);
+                        currentTab.cpu.mem.write(memoryIndex, instruction);
                         memoryIndex++;
                     }
                 } catch (NumberFormatException e) {
@@ -385,7 +415,10 @@ public class UVSimGUI extends JFrame {
     }
 
     private boolean validateInstructionCount() {
-        String content = programArea.getText();
+        FileTab currentTab = getCurrentFileTab();
+        if (currentTab == null) return false;
+
+        String content = currentTab.programArea.getText();
         String[] lines = content.split("\n");
 
         int validInstructionCount = 0;
@@ -445,25 +478,27 @@ public class UVSimGUI extends JFrame {
     }
 
     private void updateMemoryDisplay() {
-        if (cpu == null) return;
+        FileTab currentTab = getCurrentFileTab();
+        if (currentTab == null || currentTab.cpu == null) return;
 
         StringBuilder sb = new StringBuilder();
         sb.append("Addr  Value\n");
         sb.append("----  -----\n");
 
         for (int i = 0; i < 100; i++) {
-            int value = cpu.mem.read(i).getValue();
+            int value = currentTab.cpu.mem.read(i).getValue();
             if (value != 0) {
                 sb.append(String.format("%02d    %+05d\n", i, value));
             }
         }
 
-        memoryArea.setText(sb.toString());
+        currentTab.memoryArea.setText(sb.toString());
     }
 
     private void updateCPUStatus() {
-        if (cpu != null) {
-            cpuLabel.setText("CPU: Accumulator=" + cpu.acc + ", Program Counter=" + cpu.pc);
+        FileTab currentTab = getCurrentFileTab();
+        if (currentTab != null && currentTab.cpu != null) {
+            cpuLabel.setText("CPU: Accumulator=" + currentTab.cpu.acc + ", Program Counter=" + currentTab.cpu.pc);
         }
     }
 
@@ -495,16 +530,17 @@ public class UVSimGUI extends JFrame {
 
 
     public void restart() {
-        if (currentFilePath == null || currentFilePath.isEmpty()) {
+        FileTab currentTab = getCurrentFileTab();
+        if (currentTab == null || currentTab.filePath == null || currentTab.filePath.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No file loaded to restart.");
             return;
         }
 
         try {
-            String content = new String(Files.readAllBytes(Paths.get(currentFilePath)));
-            programArea.setText(content);
+            String content = new String(Files.readAllBytes(Paths.get(currentTab.filePath)));
+            currentTab.programArea.setText(content);
 
-            cpu = new UVCpu(currentFilePath, this);
+            currentTab.cpu = new UVCpu(currentTab.filePath, this);
 
             outputArea.setText("Program restarted.\n");
             inputField.setText("");
@@ -515,8 +551,7 @@ public class UVSimGUI extends JFrame {
 
             runButton.setEnabled(true);
 
-
-            statusLabel.setText("Restarted: " + Paths.get(currentFilePath).getFileName());
+            statusLabel.setText("Restarted: " + Paths.get(currentTab.filePath).getFileName());
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error restarting: " + ex.getMessage());
