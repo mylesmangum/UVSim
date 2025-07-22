@@ -337,7 +337,7 @@ public class UVSimGUI extends JFrame {
                     JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Please have each line be one word each when saving.  Each word must be 4 digits long and have a plus or minus before the word.");
+                JOptionPane.showMessageDialog(this, "Please have each line be one word each when saving.  Each word must be 6 digits long and have a plus or minus before the word.");
             }
         }
     }
@@ -391,8 +391,8 @@ public class UVSimGUI extends JFrame {
         currentTab.cpu.acc = 0;
         currentTab.cpu.halted = false;
 
-        // Clear memory
-        for (int i = 0; i < 100; i++) {
+        // Clear memory -- changed 100's to 250
+        for (int i = 0; i < 250; i++) {
             currentTab.cpu.mem.write(i, 0);
         }
 
@@ -400,7 +400,7 @@ public class UVSimGUI extends JFrame {
         int memoryIndex = 0;
         for (String line : lines) {
             line = line.trim();
-            if (!line.isEmpty() && memoryIndex < 100) {
+            if (!line.isEmpty() && memoryIndex < 250) {
                 try {
                     if (Memory.isWord(line)) {
                         int instruction = Integer.parseInt(line);
@@ -434,11 +434,11 @@ public class UVSimGUI extends JFrame {
                 }
             }
         }
-
-        if (validInstructionCount > 100) {
+        //changed 100 to 250
+        if (validInstructionCount > 250) {
             JOptionPane.showMessageDialog(this,
                     "Error: Program contains " + validInstructionCount + " instructions.\n" +
-                            "Maximum allowed is 100 instructions.",
+                            "Maximum allowed is 250 instructions.",
                     "Too Many Instructions",
                     JOptionPane.ERROR_MESSAGE);
             return false;
@@ -447,7 +447,7 @@ public class UVSimGUI extends JFrame {
         return true;
     }
 
-
+    //changed 9999 to 999999
     private void handleInput() {
         String input = inputField.getText().trim();
 
@@ -455,7 +455,7 @@ public class UVSimGUI extends JFrame {
             try {
 
                 int value = Integer.parseInt(input);
-                if (value >= -9999 && value <= 9999) {
+                if (value >= -999999 && value <= 999999) {
                     pendingInput = input;
                     inputField.setText("");
                     inputButton.setEnabled(false);
@@ -466,7 +466,7 @@ public class UVSimGUI extends JFrame {
                         notify();
                     }
                 } else {
-                    JOptionPane.showMessageDialog(this, "Enter a number between -9999 and 9999");
+                    JOptionPane.showMessageDialog(this, "Enter a number between -999999 and 999999");
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Please enter a valid number");
@@ -476,7 +476,7 @@ public class UVSimGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Please enter a number.");
         }
     }
-
+    //changed 100's to 250
     private void updateMemoryDisplay() {
         FileTab currentTab = getCurrentFileTab();
         if (currentTab == null || currentTab.cpu == null) return;
@@ -485,7 +485,7 @@ public class UVSimGUI extends JFrame {
         sb.append("Addr  Value\n");
         sb.append("----  -----\n");
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 250; i++) {
             int value = currentTab.cpu.mem.read(i).getValue();
             if (value != 0) {
                 sb.append(String.format("%02d    %+05d\n", i, value));
@@ -557,10 +557,11 @@ public class UVSimGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Error restarting: " + ex.getMessage());
         }
     }
+    //changed word length constant to 7 instead of 5
     private boolean validateFileFormatting(String text) {
         String[] words = text.split("\\r?\\n");
         for(String word : words) {
-            if (word.length() != 5){
+            if (word.length() != 7){
                 return false;
             }
             try {
@@ -580,14 +581,14 @@ public class UVSimGUI extends JFrame {
 
     public void displayMalformedLine(String line) {
         String message = String.format(
-                "Skipped malformed line: %s\nOnly signed 4-digit numbers are allowed.\n", line);
+                "Skipped malformed line: %s\nOnly signed 6-digit numbers are allowed.\n", line);
 
         displayOutput(message);
     }
 
     public int userInputInt() {
 
-        displayOutput("Enter a signed four digit word: ");
+        displayOutput("Enter a signed six digit word: ");
         String input = getInput();
         try {
             return Integer.parseInt(input);

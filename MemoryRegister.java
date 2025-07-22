@@ -7,12 +7,14 @@ public class MemoryRegister {
         value = 0;
     }
 
+    //get first 3 digits
     public int getOpCode() {
-        return value / 100;
+        return value / 1000;
     }
 
+    //get last 3 digits
     public int getAddress() {
-        return value % 100;
+        return value % 1000;
     }
 
     public int getValue() {

@@ -22,9 +22,10 @@ public class Memory {
 //        checkIndex(address);
         memoryArray[address].setValue(value);
     }
+    //250 is mem size
     public MemoryRegister[] readText(String fileName) {
-        MemoryRegister[] myArray = new MemoryRegister[100];
-        for (int i = 0; i < 100; i++) {
+        MemoryRegister[] myArray = new MemoryRegister[250];
+        for (int i = 0; i < 250; i++) {
             myArray[i] = new MemoryRegister();
         }
         try {
@@ -58,13 +59,13 @@ public class Memory {
     }
 
     public static boolean isWord(String value) {
-        return value.matches("[-+][0-9]{4}");
-    }
+        return value.matches("[-+][0-9]{6}");
+    } //changed 4 to six bc I assume 4 is the digit length
 
     //Using for UVCpu Testing without needing fileName
     public Memory() {
-        memoryArray = new MemoryRegister[100];
-        for (int i = 0; i < 100; i++) {
+        memoryArray = new MemoryRegister[250];
+        for (int i = 0; i < 250; i++) {
             memoryArray[i] = new MemoryRegister();
         }
     }
