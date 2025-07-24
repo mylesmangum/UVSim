@@ -3,7 +3,7 @@ UVSim
 
 DESCRIPTION:
 UVSim is a virtual machine simulator that executes programs written in BasicML.
-The simulator includes a CPU, accumulator register, and 100-word memory.
+The simulator includes a CPU, accumulator register, and 250-word memory.
 Users can load, edit, and run BasicML programs within a user-friendly GUI.
 
 FEATURES:
