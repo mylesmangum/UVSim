@@ -36,7 +36,8 @@ public class UVSimGUI extends JFrame {
 
     private JTabbedPane tabbedPane;
     private ArrayList<FileTab> fileTabs;
-
+    private ArrayList<JPanel> primaryPanels;
+    private ArrayList<JPanel> secondaryPanels;
     public static final String PRIMARY = "primary";
     public static final String SECONDARY = "secondary";
 
@@ -48,6 +49,8 @@ public class UVSimGUI extends JFrame {
 
     private void setupGUI() {
         Preferences prefs = Preferences.userNodeForPackage(UVSimGUI.class);
+        primaryPanels = new ArrayList<>();
+        secondaryPanels = new ArrayList<>();
         Color primary;
         Color secondary;
         if(prefs.get(PRIMARY,"default") == "default"){
@@ -83,6 +86,7 @@ public class UVSimGUI extends JFrame {
         convertButton.setForeground(Color.black);
         statusLabel = new JLabel("No file loaded");
         customizeButton = new JButton("Customize");
+        primaryPanels.add(topPanel);
         topPanel.setBackground(primary);
 
 
@@ -97,9 +101,11 @@ public class UVSimGUI extends JFrame {
             c.setBackground(secondary);
             c.setForeground(Color.black);
         }
+        secondaryPanels.add(topPanel);
 
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 5, 5));
         centerPanel.setBackground(primary);
+        primaryPanels.add(centerPanel);
 
         tabbedPane = new JTabbedPane();
         tabbedPane.setBackground(primary);
@@ -107,6 +113,7 @@ public class UVSimGUI extends JFrame {
 
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(primary);
+        primaryPanels.add(rightPanel);
 
         // Output panel
         JPanel outputPanel = new JPanel(new BorderLayout());
@@ -143,6 +150,7 @@ public class UVSimGUI extends JFrame {
         cpuLabel.setFont(new Font("Monospaced", Font.BOLD, 12));
         bottomPanel.add(cpuLabel);
         bottomPanel.setBackground(primary);
+        primaryPanels.add(bottomPanel);
 
         add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
@@ -160,10 +168,12 @@ public class UVSimGUI extends JFrame {
         colorPanel.add(secondaryColor);
         add(colorPanel, BorderLayout.EAST);
         colorPanel.setBackground(primary);
+        primaryPanels.add(colorPanel);
         for(Component c : colorPanel.getComponents()){
             c.setForeground(Color.black);
             c.setBackground(secondary);
         }
+        secondaryPanels.add(colorPanel);
     }
 
 
@@ -212,7 +222,6 @@ public class UVSimGUI extends JFrame {
         customizeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 colorPanel.setVisible(!colorPanel.isVisible());
-
             }
         });
         primaryColor.addActionListener(new ActionListener() {
@@ -221,7 +230,9 @@ public class UVSimGUI extends JFrame {
                 p = JColorChooser.showDialog(colorPanel, "Select Color", Color.black);
                 Preferences prefs = Preferences.userNodeForPackage(UVSimGUI.class);
                 prefs.put(PRIMARY, p.toString());
-
+                for (JPanel panel : primaryPanels) {
+                    panel.setBackground(p);
+                }
             }
         });
         secondaryColor.addActionListener(new ActionListener() {
@@ -230,6 +241,11 @@ public class UVSimGUI extends JFrame {
                 s = JColorChooser.showDialog(colorPanel, "Select Color", Color.black);
                 Preferences prefs = Preferences.userNodeForPackage(UVSimGUI.class);
                 prefs.put(SECONDARY, s.toString());
+                for (JPanel panel : secondaryPanels) {
+                    for (Component c : panel.getComponents()) {
+                        c.setBackground(s);
+                    }
+                }
             }
         });
     }
@@ -286,8 +302,8 @@ public class UVSimGUI extends JFrame {
                 fileTabs.add(fileTab);
 
                 JPanel leftPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-                leftPanel.setBackground(new Color(36,93,56)); // Use primary color
-
+                //leftPanel.setBackground(new Color(36,93,56)); // Use primary color
+                primaryPanels.add(leftPanel);
                 JPanel programPanel = new JPanel(new BorderLayout());
                 programPanel.add(new JLabel("Program:"), BorderLayout.NORTH);
                 programPanel.add(new JScrollPane(fileTab.programArea), BorderLayout.CENTER);
