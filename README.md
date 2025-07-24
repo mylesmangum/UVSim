@@ -37,7 +37,7 @@ RUNNING THE APPLICATION:
 #### Top Buttons
 - **Open Program File**: Load a `.txt` BasicML file from any file system.
 - **Run Program**: Execute loaded or edited instructions via file selected by user.
-- **Restart Program**: Reload the last opened file.
+- **Convert 4->6**: Converts a `.txt` file with 4 digit words to one with 6 digits instead.
 - **Save As**: Save the current program (with format validation).
 - **Clear Output**: Clears the output pane.
 - **Customize**: Opens color selection tools (primary/secondary).
@@ -65,24 +65,24 @@ Shows the current accumulator and the program counter values in real time.
 
 BASICML INSTRUCTION SET:
 I/O Operations:
-- 10XX: READ - Read from keyboard to memory address XX
-- 11XX: WRITE - Write from memory address XX to screen
+- 010XXX: READ - Read from keyboard to memory address XX
+- 011XXX: WRITE - Write from memory address XX to screen
 
 Load/Store Operations:
-- 20XX: LOAD - Load from memory address XX to accumulator
-- 21XX: STORE - Store accumulator to memory address XX
+- 020XXX: LOAD - Load from memory address XX to accumulator
+- 021XXX: STORE - Store accumulator to memory address XX
 
 Arithmetic Operations:
-- 30XX: ADD - Add memory address XX to accumulator
-- 31XX: SUBTRACT - Subtract memory address XX from accumulator
-- 32XX: DIVIDE - Divide accumulator by memory address XX
-- 33XX: MULTIPLY - Multiply accumulator by memory address XX
+- 030XXX: ADD - Add memory address XX to accumulator
+- 031XXX: SUBTRACT - Subtract memory address XX from accumulator
+- 032XXX: DIVIDE - Divide accumulator by memory address XX
+- 033XXX: MULTIPLY - Multiply accumulator by memory address XX
 
 Control Operations:
-- 40XX: BRANCH - Jump to memory address XX
-- 41XX: BRANCHNEG - Jump to address XX if accumulator is negative
-- 42XX: BRANCHZERO - Jump to address XX if accumulator is zero
-- 43XX: HALT - Stop program execution
+- 040XXX: BRANCH - Jump to memory address XX
+- 041XXX: BRANCHNEG - Jump to address XX if accumulator is negative
+- 042XXX: BRANCHZERO - Jump to address XX if accumulator is zero
+- 043XXX: HALT - Stop program execution
 
 RUNNING TESTS:
 To run the unit tests, compile with JUnit and execute:
