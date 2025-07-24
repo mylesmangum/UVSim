@@ -35,22 +35,19 @@ public class Memory {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 try{
-                //int nextValue = Integer.parseInt(line); Changed to use just the string
                 if(isWord(line)) {
                     myArray[i].setValue(Integer.parseInt(line));
                     i++;
                 }
                 else {
                     gui.displayMalformedLine(line);
-                    //System.out.printf("in else");
-
                 }
                 }catch(NumberFormatException e) {
                     gui.displayMalformedLine(line);
-                    //System.out.printf("in catch");
-
                 }
-
+                if (i >= 250 && scanner.hasNextLine()) {
+                    gui.displayOutput("Error: File has more than 250 valid instructions. Only the first 250 were loaded.");
+                }
             }
         } catch (FileNotFoundException e) {
             gui.displayOutput("File not found" + fileName);
@@ -59,8 +56,8 @@ public class Memory {
     }
 
     public static boolean isWord(String value) {
-        return value.matches("[-+][0-9]{6}");
-    } //changed 4 to six bc I assume 4 is the digit length
+        return value.matches("[-+][0-9]{4}") || value.matches("[-+][0-9]{6}");
+    }
 
     //Using for UVCpu Testing without needing fileName
     public Memory() {
