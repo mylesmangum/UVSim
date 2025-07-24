@@ -9,6 +9,7 @@ Users can load, edit, and run BasicML programs within a user-friendly GUI.
 FEATURES:
 - Java-based desktop GUI with program, memory, and output panes.
 - Load, edit, and save BasicML programs.
+- Swap between multiple text files to run individually.
 - Step-free execution with real-time output.
 - Input prompt for READ instructions.
 - Restart functionality for quick reloads.
@@ -16,7 +17,6 @@ FEATURES:
 - Visual memory + CPU state updates.
 - Error handling for invalid input, malformed lines, and overflows.
 - JUnit test suite included.
-- Multiple text files can be opened at once
 
 PREREQUISITES:
 - Java JDK 8 or higher
@@ -38,7 +38,7 @@ RUNNING THE APPLICATION:
 #### Top Buttons
 - **Open Program File**: Load a `.txt` BasicML file from any file system.
 - **Run Program**: Execute loaded or edited instructions via file selected by user.
-- **Convert 4->6**: Converts a `.txt` file with 4 digit words to one with 6 digits instead.  Select the file that you would like to change, and then after selected save it as any other name to convert it.
+- **Convert 4->6**: Converts a `.txt` file with 4 digit words to one with 6 digits instead.  Select the file that you would like to change, and then after selected save it as any other name to convert it.  To run the converted file, you will need to reopen the file with the Open button.
 - **Save As**: Save the current program (with format validation).
 - **Clear Output**: Clears the output pane.
 - **Customize**: Opens color selection tools (primary/secondary).
