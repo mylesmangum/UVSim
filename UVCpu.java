@@ -9,14 +9,13 @@
 
         //Using for testing
         public UVCpu() {
-            this.mem = new Memory(); // You'll need to add this constructor in Memory
+            this.mem = new Memory();
         }
-
 
          public UVCpu(String fileName, UVSimGUI gui) {
              this.testName = fileName;
              this.gui = gui;
-             this.mem = new Memory(fileName, gui); // ✅ pass GUI into memory
+             this.mem = new Memory(fileName, gui);
          }
 
          //changed to 249 bc changed array size

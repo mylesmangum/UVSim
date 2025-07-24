@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.prefs.*;
+import java.util.Scanner;
 
 public class UVSimGUI extends JFrame {
     private UVCpu cpu;
@@ -27,11 +28,11 @@ public class UVSimGUI extends JFrame {
     private JLabel statusLabel;
     private JLabel cpuLabel;
     private String pendingInput = null;
-    private JButton restartButton;
     private JButton customizeButton;
     private JPanel colorPanel;
     private JButton primaryColor;
     private JButton secondaryColor;
+    private JButton convertButton;
 
     private JTabbedPane tabbedPane;
     private ArrayList<FileTab> fileTabs;
@@ -76,8 +77,10 @@ public class UVSimGUI extends JFrame {
         runButton.setEnabled(false);
         clearOutputButton = new JButton("Clear Output");
         topPanel.add(clearOutputButton);
-        restartButton = new JButton("Restart Program");
-        topPanel.add(restartButton);
+        convertButton = new JButton("Convert 4→6");
+        topPanel.add(convertButton);
+        convertButton.setBackground(secondary);
+        convertButton.setForeground(Color.black);
         statusLabel = new JLabel("No file loaded");
         customizeButton = new JButton("Customize");
         topPanel.setBackground(primary);
@@ -194,6 +197,7 @@ public class UVSimGUI extends JFrame {
                 handleInput();
             }
         });
+        convertButton.addActionListener(e -> convert4DigitFile());
         clearOutputButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 outputArea.setText("");
@@ -204,7 +208,6 @@ public class UVSimGUI extends JFrame {
                 });
             }
         });
-        restartButton.addActionListener(e -> restart());
 
         customizeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -620,6 +623,58 @@ public class UVSimGUI extends JFrame {
             }
         }
         return new Color(r, g, b, a);
+    }
+
+    private void convert4DigitFile() { //This method converts a 4 digit signed int into 6 digits
+        JFileChooser chooser = new JFileChooser(currentDirectoryPath);
+        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().endsWith(".txt");
+            }
+            public String getDescription() {
+                return "Text Files (*.txt)";
+            }
+        });
+
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+
+            ArrayList<String> convertedLines = new ArrayList<>();
+            try (Scanner scanner = new Scanner(file)) {
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine().trim();
+                    if (line.matches("[-+][0-9]{4}")) {
+                        String sign = line.substring(0, 1);
+                        String opcode = line.substring(1, 3);
+                        String address = line.substring(3);
+                        String converted = sign + "0" + opcode + "0" + address;
+                        convertedLines.add(converted);
+                    } else if (line.matches("[-+][0-9]{6}")) {
+                        convertedLines.add(line);
+                    } else if (!line.isEmpty()) {
+                        displayOutput("Skipping malformed line: " + line);
+                    }
+                }
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error reading file: " + ex.getMessage());
+                return;
+            }
+
+            // Prompt user to save new converted file
+            JFileChooser saveChooser = new JFileChooser(currentDirectoryPath);
+            if (saveChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File saveFile = saveChooser.getSelectedFile();
+                try (FileWriter writer = new FileWriter(saveFile)) {
+                    for (String line : convertedLines) {
+                        writer.write(line + "\n");
+                    }
+                    writer.flush();
+                    JOptionPane.showMessageDialog(this, "File converted and saved successfully.");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Error saving converted file: " + ex.getMessage());
+                }
+            }
+        }
     }
 
 
