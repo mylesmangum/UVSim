@@ -61,25 +61,25 @@ Shows the current accumulator and the program counter values in real time.
 - Programs must be .txt files
 - Each line contains a signed 4-digit decimal number
 - Instructions start at memory location 00
-- Format: +XXYY where XX is the operation code and YY is the memory address
+- Format: +XXXYYY where XXX is the operation code and YYY is the memory address
 
 BASICML INSTRUCTION SET:
 I/O Operations:
 - 010XXX: READ - Read from keyboard to memory address XX
-- 011XXX: WRITE - Write from memory address XX to screen
+- 011XXX: WRITE - Write from memory address XXX to screen
 
 Load/Store Operations:
-- 020XXX: LOAD - Load from memory address XX to accumulator
-- 021XXX: STORE - Store accumulator to memory address XX
+- 020XXX: LOAD - Load from memory address XXX to accumulator
+- 021XXX: STORE - Store accumulator to memory address XXX
 
 Arithmetic Operations:
-- 030XXX: ADD - Add memory address XX to accumulator
+- 030XXX: ADD - Add memory address XXX to accumulator
 - 031XXX: SUBTRACT - Subtract memory address XX from accumulator
-- 032XXX: DIVIDE - Divide accumulator by memory address XX
-- 033XXX: MULTIPLY - Multiply accumulator by memory address XX
+- 032XXX: DIVIDE - Divide accumulator by memory address XXX
+- 033XXX: MULTIPLY - Multiply accumulator by memory address XXX
 
 Control Operations:
-- 040XXX: BRANCH - Jump to memory address XX
+- 040XXX: BRANCH - Jump to memory address XXX
 - 041XXX: BRANCHNEG - Jump to address XX if accumulator is negative
 - 042XXX: BRANCHZERO - Jump to address XX if accumulator is zero
 - 043XXX: HALT - Stop program execution
@@ -102,6 +102,6 @@ ERROR HANDLING:
 - Invalid file format lines are skipped during loading, and the user is notified.
 
 LIMITATIONS:
-- Memory is limited to 100 words (addresses 00-99)
-- Word values must be 4-digit signed decimals (-9999 to +9999)
-- Programs must start at memory address 00
+- Memory is limited to 250 words (addresses 00-249)
+- Word values must be 6-digit signed decimals (-999999 to +999999)
+- Programs must start at memory address 000
