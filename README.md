@@ -77,7 +77,7 @@ The new preference will be kept between launches of the GUI so the user doesn't 
 ## File Format:
 - Programs must be .txt files
 - Each line contains a signed 6-digit decimal number
-- Instructions start at memory location 00
+- Instructions start at memory location 000
 - Format: +XXXYYY where XXX is the operation code and YYY is the memory address
 
 BASICML INSTRUCTION SET:
