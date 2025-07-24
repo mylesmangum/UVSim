@@ -233,6 +233,7 @@ public class UVSimGUI extends JFrame {
                 for (JPanel panel : primaryPanels) {
                     panel.setBackground(p);
                 }
+                tabbedPane.setBackground(p);
             }
         });
         secondaryColor.addActionListener(new ActionListener() {
