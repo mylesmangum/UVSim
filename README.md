@@ -16,6 +16,7 @@ FEATURES:
 - Visual memory + CPU state updates.
 - Error handling for invalid input, malformed lines, and overflows.
 - JUnit test suite included.
+- Multiple text files can be opened at once
 
 PREREQUISITES:
 - Java JDK 8 or higher
@@ -37,35 +38,51 @@ RUNNING THE APPLICATION:
 #### Top Buttons
 - **Open Program File**: Load a `.txt` BasicML file from any file system.
 - **Run Program**: Execute loaded or edited instructions via file selected by user.
-- **Convert 4->6**: Converts a `.txt` file with 4 digit words to one with 6 digits instead.
+- **Convert 4->6**: Converts a `.txt` file with 4 digit words to one with 6 digits instead.  Select the file that you would like to change, and then after selected save it as any other name to convert it.
 - **Save As**: Save the current program (with format validation).
 - **Clear Output**: Clears the output pane.
 - **Customize**: Opens color selection tools (primary/secondary).
 
 #### Program Pane
-Edit or review the loaded code. Each line must be a signed 4-digit word.
+This is displayed on the top-left hand side of the GUI, after a file has been selected.  Within
+this specific pane, the file is editable before running the program.  To save the edits, select the
+"Save As" button in the top section of the GUI.
+In addition to allowing edits, the user can also open multiple files at one time.  To swap between files,
+there are labels above the program pane that can be selected.  On selection, the chosen file will be displayed.
 
 #### Memory Pane
-Displays non-zero memory values and their addresses.
+This is displayed on the bottom-left hand side of the GUI, after a file has been selected.  It is a 
+visual representation of the virtual memory storing all the code above it.  As the program runs, the memory
+will update in real time based on any inputs of the user.
 
 #### Output Pane
-Displays output from write instructions and other system messages.
+This is displayed on the right hand side of the GUI.  Displays output from write instructions and other system messages.
 
 #### Input Field
-Prompts for user input when a read instruction is reached.
+Underneath the GUI is the area where user's can input based on what their code actually does. 
+Prompts for user input will display above in the output pane.
 
 #### CPU Status
 Shows the current accumulator and the program counter values in real time.
 
+#### Customize Pane
+On the far right of the top panel is a button labeled "Customize"
+On selection, the GUI will extend to have two additional buttons explained below
+- **Primary Color**:  Background blank space can be modified to any selected color based on the choice of the user
+- **Secondary Color**:  All buttons' background color can be modified based on the choice of the user
+When these buttons are selected, a secondary window will display with several ways for the user to change the color of their GUI
+The color will change as soon as the choice is confirmed in this secondary window by the user.
+The new preference will be kept between launches of the GUI so the user doesn't need to select their preference every time.
+
 ## File Format:
 - Programs must be .txt files
-- Each line contains a signed 4-digit decimal number
+- Each line contains a signed 6-digit decimal number
 - Instructions start at memory location 00
 - Format: +XXXYYY where XXX is the operation code and YYY is the memory address
 
 BASICML INSTRUCTION SET:
 I/O Operations:
-- 010XXX: READ - Read from keyboard to memory address XX
+- 010XXX: READ - Read from keyboard to memory address XXX
 - 011XXX: WRITE - Write from memory address XXX to screen
 
 Load/Store Operations:
@@ -74,14 +91,14 @@ Load/Store Operations:
 
 Arithmetic Operations:
 - 030XXX: ADD - Add memory address XXX to accumulator
-- 031XXX: SUBTRACT - Subtract memory address XX from accumulator
+- 031XXX: SUBTRACT - Subtract memory address XXX from accumulator
 - 032XXX: DIVIDE - Divide accumulator by memory address XXX
 - 033XXX: MULTIPLY - Multiply accumulator by memory address XXX
 
 Control Operations:
 - 040XXX: BRANCH - Jump to memory address XXX
-- 041XXX: BRANCHNEG - Jump to address XX if accumulator is negative
-- 042XXX: BRANCHZERO - Jump to address XX if accumulator is zero
+- 041XXX: BRANCHNEG - Jump to address XXX if accumulator is negative
+- 042XXX: BRANCHZERO - Jump to address XXX if accumulator is zero
 - 043XXX: HALT - Stop program execution
 
 RUNNING TESTS:
@@ -97,7 +114,7 @@ SAMPLE FILES:
 
 ERROR HANDLING:
 - Division by zero throws ArithmeticException
-- Overflow (values > 9999 or < -9999) displays an error and requests input again.
+- Overflow (values > 999999 or < -999999) displays an error and requests input again.
 - Invalid memory access throws IndexOutOfBoundsException
 - Invalid file format lines are skipped during loading, and the user is notified.
 
