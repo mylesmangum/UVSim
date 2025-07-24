@@ -79,9 +79,7 @@ public class UVSimGUI extends JFrame {
         runButton = new JButton("Run Program");
         runButton.setEnabled(false);
         clearOutputButton = new JButton("Clear Output");
-        topPanel.add(clearOutputButton);
         convertButton = new JButton("Convert 4→6");
-        topPanel.add(convertButton);
         convertButton.setBackground(secondary);
         convertButton.setForeground(Color.black);
         statusLabel = new JLabel("No file loaded");
@@ -91,9 +89,11 @@ public class UVSimGUI extends JFrame {
 
 
 
-        topPanel.add(saveButton);
         topPanel.add(openButton);
         topPanel.add(runButton);
+        topPanel.add(saveButton);
+        topPanel.add(convertButton);
+        topPanel.add(clearOutputButton);
         topPanel.add(statusLabel);
         topPanel.add(customizeButton);
         //color the buttons
