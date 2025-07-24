@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.prefs.*;
 import java.util.Scanner;
@@ -643,6 +644,7 @@ public class UVSimGUI extends JFrame {
     }
 
     private void convert4DigitFile() { //This method converts a 4 digit signed int into 6 digits
+        String[] possibleOpCodes = {"10", "11", "20", "21", "30", "31", "32", "33", "40", "41", "42", "43"};
         JFileChooser chooser = new JFileChooser(currentDirectoryPath);
         chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
             public boolean accept(File f) {
@@ -664,7 +666,12 @@ public class UVSimGUI extends JFrame {
                         String sign = line.substring(0, 1);
                         String opcode = line.substring(1, 3);
                         String address = line.substring(3);
-                        String converted = sign + "0" + opcode + "0" + address;
+                        String converted;
+                        if (Arrays.asList(possibleOpCodes).contains(opcode)) {
+                            converted = sign + "0" + opcode + "0" + address;
+                        }else{
+                            converted = sign + "0" + "0" + opcode + address;
+                        }
                         convertedLines.add(converted);
                     } else if (line.matches("[-+][0-9]{6}")) {
                         convertedLines.add(line);
