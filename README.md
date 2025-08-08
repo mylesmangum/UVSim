@@ -8,6 +8,7 @@ Users can load, edit, and run BasicML programs within a user-friendly GUI.
 
 ### 🎥 Demo
 [![UVSim demo](https://img.youtube.com/vi/VojEco3saF8/maxresdefault.jpg)](https://youtu.be/VojEco3saF8)
+https://youtu.be/VojEco3saF8
 
 FEATURES:
 - Java-based desktop GUI with program, memory, and output panes.
